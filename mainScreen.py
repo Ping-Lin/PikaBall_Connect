@@ -20,7 +20,7 @@ def runGame(pikaGroup):
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.quit()
+                sys.exit()
 
         # draw the image
         pikaGroup.update()
@@ -36,8 +36,10 @@ def main():
     pygame.display.set_caption('PikaBall X Connect')
 
     # Load the element
-    pikaLeft = character.pika.Pika()
+    pikaLeft = character.pika.Pika(True)
+    pikaRight = character.pika.Pika()
     pikaGroup = pygame.sprite.Group(pikaLeft)
+    pikaGroup.add(pikaRight)
 
     while True:
         runGame(pikaGroup)
