@@ -10,19 +10,22 @@ import gbv
 
 
 class Pika(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, reverse=False):
         super(Pika, self).__init__()
 
         # Load the pika image
         self.pikaImages = []
         for i in xrange(1, 6):
             path = 'character/pikaToRight' + str(i) + '.bmp'
-            self.pikaImages.append(loadImage(path))
+            self.pikaImages.append(loadImage(path, reverse))
 
         # initialize the image and rect
         self.index = 0
         self.image = self.pikaImages[self.index]
-        self.rect = pygame.Rect(gbv.MARGINRIGHT, gbv.MARGINHEIGHT, 256, 256)
+        if reverse == False:
+            self.rect = pygame.Rect(gbv.MARGINRIGHT, gbv.MARGINHEIGHT, 64, 64)
+        else:
+            self.rect = pygame.Rect(gbv.MARGINLEFT, gbv.MARGINHEIGHT, 64, 64)
 
     def update(self):
         self.index += 1
@@ -31,8 +34,10 @@ class Pika(pygame.sprite.Sprite):
         self.image = self.pikaImages[self.index]
 
 
-def loadImage(path):
+def loadImage(path, reverse):
     image = pygame.image.load(path).convert()
+    image = pygame.transform.flip(image, reverse, False)
+    image = pygame.transform.scale(image, (128, 128))
     transColor = image.get_at((0, 0))
     image.set_colorkey(transColor)
     return image
