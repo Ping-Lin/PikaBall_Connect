@@ -13,15 +13,17 @@ import gbv
 class Pika(pygame.sprite.Sprite):
     def __init__(self, reverse=False):
         super(Pika, self).__init__()
+
+        # pika width and height
+        self.width = 128
+        self.height = 128
+
         # Load the pika image
         self.pikaImages = []
         for i in xrange(1, 6):
             path = 'character/pikaToRight' + str(i) + '.bmp'
-            self.pikaImages.append(loadImage(path, reverse))
-
-        # pika width and height
-        self.width = 64
-        self.height = 64
+            self.pikaImages.append(
+                loadImage(path, reverse, self.width, self.height))
 
         # direction
         self.direct = reverse
@@ -30,9 +32,9 @@ class Pika(pygame.sprite.Sprite):
 
         # speed, gravity and height
         self.speed = [0, 0]
-        self.gravity = 0.98
+        self.gravity = 1.3
         self.pikaHeight = 200
-        self.pikaV0 = -20
+        self.pikaV0 = -24
 
         # initialize the image and rect
         self.index = 0
@@ -54,18 +56,18 @@ class Pika(pygame.sprite.Sprite):
 
         if not self.direct:
             if clickButton['left']:
-                self.speed[0] -= 10
+                self.speed[0] -= 15
             if clickButton['right']:
-                self.speed[0] += 10
+                self.speed[0] += 15
             if clickButton['up']:
                 self.jump = True
             if clickButton['space']:
                 self.attack = True
         else:
             if clickButton['a']:
-                self.speed[0] -= 10
+                self.speed[0] -= 15
             if clickButton['d']:
-                self.speed[0] += 10
+                self.speed[0] += 15
             if clickButton['w']:
                 self.jump = True
             if clickButton['lctrl']:
@@ -104,20 +106,20 @@ class Pika(pygame.sprite.Sprite):
         self.checkMovement(clickButton, wallList)
 
 
-def loadImage(path, reverse):
+def loadImage(path, reverse, width, height):
     """
     load the image, and if the reverse == true then flip
     """
     image = pygame.image.load(path).convert()
     image = pygame.transform.flip(image, reverse, False)
-    image = pygame.transform.scale(image, (128, 128))
+    image = pygame.transform.scale(image, (width, height))
     transColor = image.get_at((0, 0))
     image.set_colorkey(transColor)
     return image
 
 
 def checkCollision(tmpRect, wallList):
-        if tmpRect.collidelist(wallList) == -1:
-            return False
-        else:
-            return True
+    if tmpRect.collidelist(wallList) == -1:
+        return False
+    else:
+        return True

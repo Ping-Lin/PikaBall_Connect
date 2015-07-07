@@ -10,7 +10,7 @@ import pygame
 import sys
 from pygame.locals import *
 import gbv
-import character.pika
+from character.pika import Pika
 from obstacle.wall import Wall
 
 def runGame(spriteGroup, wallList):
@@ -76,13 +76,13 @@ def main():
     CLOCK = pygame.time.Clock()
 
     # Load the element
-    pikaLeft = character.pika.Pika(True)
-    pikaRight = character.pika.Pika()
+    pikaLeft = Pika(True)
+    pikaRight = Pika()
     spriteGroup = pygame.sprite.Group(pikaLeft)
     spriteGroup.add(pikaRight)
     wallList = []
     wallList.append(
-        Wall(pygame.Rect(gbv.WINWIDTH-pikaLeft.width*0.7, 0, 1, gbv.WINHEIGHT)))
+        Wall(pygame.Rect(gbv.WINWIDTH, 0, 1, gbv.WINHEIGHT)))
     wallList.append(
         Wall(pygame.Rect(0, 0, 1, gbv.WINHEIGHT)))
     wallList.append(
