@@ -20,7 +20,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall):
     """
     clickButton = dict.fromkeys(
         ['left', 'right', 'up', 'space',
-         'a', 'd', 'w', 'lctrl'])
+         'a', 'd', 'w', 'lshift'])
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -41,8 +41,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall):
                     clickButton['d'] = True
                 elif event.key == pygame.K_w:
                     clickButton['w'] = True
-                elif event.key == pygame.K_LCTRL:
-                    clickButton['lctrl'] = True
+                elif event.key == pygame.K_LSHIFT:
+                    clickButton['lshift'] = True
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     clickButton['left'] = False
@@ -58,8 +58,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall):
                     clickButton['d'] = False
                 elif event.key == pygame.K_w:
                     clickButton['w'] = False
-                elif event.key == pygame.K_LCTRL:
-                    clickButton['lctrl'] = False
+                elif event.key == pygame.K_LSHIFT:
+                    clickButton['lshift'] = False
 
         # draw the image
         DISPLAYSURF.fill(gbv.BGCOLOR)
