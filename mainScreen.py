@@ -12,8 +12,9 @@ from pygame.locals import *
 import gbv
 from character.pika import Pika
 from obstacle.wall import Wall
+from ball.pikaBall import PikaBall
 
-def runGame(spriteGroup, wallList):
+def runGame(spriteGroup, wallList, pikaList, pikaBall):
     """
     Run the main loop of game
     """
@@ -63,9 +64,11 @@ def runGame(spriteGroup, wallList):
         # draw the image
         DISPLAYSURF.fill(gbv.BGCOLOR)
         spriteGroup.update(clickButton, wallList)
+        pikaBall.update(clickButton, wallList, pikaList)
         spriteGroup.draw(DISPLAYSURF)
+        pikaBall.draw(DISPLAYSURF)
         pygame.display.update()
-        CLOCK.tick(15)
+        CLOCK.tick(40)
 
 
 def main():
@@ -78,23 +81,26 @@ def main():
     # Load the element
     pikaLeft = Pika(True)
     pikaRight = Pika()
+    pikaList = [pikaLeft, pikaRight]
     spriteGroup = pygame.sprite.Group(pikaLeft)
     spriteGroup.add(pikaRight)
-    wallList = []
-    wallList.append(
-        Wall(pygame.Rect(gbv.WINWIDTH, 0, 1, gbv.WINHEIGHT)))
+    wallList = []   #left, right, up, down and stick
     wallList.append(
         Wall(pygame.Rect(0, 0, 1, gbv.WINHEIGHT)))
     wallList.append(
-        Wall(pygame.Rect(0, 0, gbv.WINWIDTH, 1)))
+        Wall(pygame.Rect(gbv.WINWIDTH, 0, 500, gbv.WINHEIGHT)))
+    wallList.append(
+        Wall(pygame.Rect(0, 0, gbv.WINWIDTH, 10)))
+    wallList.append(
+        Wall(pygame.Rect(0, gbv.WINHEIGHT, gbv.WINWIDTH, 500)))
     wallList.append(
         Wall(pygame.Rect(
             gbv.STICKPOS[0], gbv.STICKPOS[1], gbv.STICKWIDTH, gbv.STICKHEIGHT),
             img=True))
-    spriteGroup.add(wallList[-1])   # add the stick
-
+    spriteGroup.add(wallList[-1])   # add the stick, need to show
+    # spriteGroup.add(wallList)
     while True:
-        runGame(spriteGroup, wallList)
+        runGame(spriteGroup, wallList, pikaList, PikaBall())
 
 if __name__ == '__main__':
     main()
