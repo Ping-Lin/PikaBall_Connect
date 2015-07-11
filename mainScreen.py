@@ -32,6 +32,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
                     clickButton['right'] = True
                 elif event.key == pygame.K_UP:
                     clickButton['up'] = True
+                elif event.key == pygame.K_DOWN:
+                    clickButton['down'] = True
                 elif event.key == pygame.K_SPACE:
                     clickButton['space'] = True
                 elif event.key == pygame.K_a:
@@ -40,6 +42,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
                     clickButton['d'] = True
                 elif event.key == pygame.K_w:
                     clickButton['w'] = True
+                elif event.key == pygame.K_s:
+                    clickButton['s'] = True
                 elif event.key == pygame.K_LSHIFT:
                     clickButton['lshift'] = True
             elif event.type == pygame.KEYUP:
@@ -49,6 +53,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
                     clickButton['right'] = False
                 elif event.key == pygame.K_UP:
                     clickButton['up'] = False
+                elif event.key == pygame.K_DOWN:
+                    clickButton['down'] = False
                 elif event.key == pygame.K_SPACE:
                     clickButton['space'] = False
                 elif event.key == pygame.K_a:
@@ -57,6 +63,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
                     clickButton['d'] = False
                 elif event.key == pygame.K_w:
                     clickButton['w'] = False
+                elif event.key == pygame.K_s:
+                    clickButton['s'] = False
                 elif event.key == pygame.K_LSHIFT:
                     clickButton['lshift'] = False
 
@@ -125,8 +133,8 @@ def main():
     # some initial value
     SCORETXT = [0, 0]
     clickButton = dict.fromkeys(
-        ['left', 'right', 'up', 'space',
-         'a', 'd', 'w', 'lshift'])
+        ['left', 'right', 'up', 'down', 'space',
+         'a', 'd', 'w', 's', 'lshift'])
     txtImgs = [FONT.render("0", 1, (255, 0, 0))]*2
     NEWGAME = False
     ALPHA = 0

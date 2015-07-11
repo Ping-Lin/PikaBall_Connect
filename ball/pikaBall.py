@@ -65,12 +65,15 @@ def checkCollision(tmpRect, wallList, pikaList, ballSpeed):
     ballSpeed[0] *= 0.9
     ballSpeed[1] *= 0.9
     if wall == 0:   # left
-        return [abs(ballSpeed[0]), ballSpeed[1]]
-    elif wall == 1:   # right
+        if tmpRect.centerx <= 0:
+            return [abs(ballSpeed[0])+tmpRect.centerx, ballSpeed[1]]
+        else:
+            return [abs(ballSpeed[0]), ballSpeed[1]]
+    elif wall == 1 or tmpRect.centerx >= gbv.WINWIDTH:   # right
         return [-abs(ballSpeed[0]), ballSpeed[1]]
-    elif wall == 2:   # up
+    elif wall == 2 or tmpRect.centery <= 0:   # up
         return [ballSpeed[0], abs(ballSpeed[1])]
-    elif wall == 3:   # down
+    elif wall == 3 or tmpRect.centery >= gbv.WINHEIGHT:   # down
         if tmpRect.centerx < gbv.STICKPOS[0]:
             wallList[wall].ifScore = [False, True]
         else:
@@ -93,12 +96,14 @@ def checkCollision(tmpRect, wallList, pikaList, ballSpeed):
     if pika != -1:
         # check for ball direction
         horizon = (pikaList[pika].rect.centerx-tmpRect.centerx)*0.35
+        atSpeed = [speed*pikaList[pika].atLevel for speed in
+                   pikaList[pika].atSpeed]
         if horizon < 0:
-            return [abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05,
-                    -35+pikaList[pika].speed[1]*0.3]
+            return [abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05+\
+                    atSpeed[0], -35+pikaList[pika].speed[1]*0.3+atSpeed[1]]
         else:
-            return [-abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05,
-                    -35+pikaList[pika].speed[1]*0.3]
+            return [-abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05+\
+                    atSpeed[0], -35+pikaList[pika].speed[1]*0.3+atSpeed[1]]
 
 
 def loadImg(path, width, height):

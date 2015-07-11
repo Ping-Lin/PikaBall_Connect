@@ -56,7 +56,7 @@ class Pika(pygame.sprite.Sprite):
         self.puingNow = False
         self.attack = False
         self.attackingNow = False
-        self.attackLevel = 0
+        self.atLevel = 0
 
         # speed, gravity and height, and attack Spped
         self.speed = [0, 0]
@@ -88,19 +88,29 @@ class Pika(pygame.sprite.Sprite):
         if not self.direct:
             if clickButton['left']:
                 self.speed[0] -= 10
+                self.atSpeed[0] = -10
             if clickButton['right']:
                 self.speed[0] += 10
+                self.atSpeed[0] = 10
             if clickButton['up']:
                 self.jump = True
+                self.atSpeed[1] = -2
+            if clickButton['down']:
+                self.atSpeed[1] = 10
             if clickButton['space']:
                 self.attack = self.pu = True
         else:
             if clickButton['a']:
                 self.speed[0] -= 10
+                self.atSpeed[0] = -10
             if clickButton['d']:
                 self.speed[0] += 10
+                self.atSpeed[0] = 10
             if clickButton['w']:
                 self.jump = True
+                self.atSpeed[1] = -2
+            if clickButton['s']:
+                self.atSpeed[1] = 10
             if clickButton['lshift']:
                 self.attack = self.pu = True
 
@@ -113,7 +123,7 @@ class Pika(pygame.sprite.Sprite):
             if self.attack:   # jumping then can attack
                 self.attackingNow = True
                 self.indexAt = 0
-                self.attackLevel += 1
+                self.atLevel += 1
         if self.rect.y + self.speed[1] >= gbv.MARGINHEIGHT:
             self.speed[1] = gbv.MARGINHEIGHT - self.rect.y
             self.jumpingNow = False
@@ -141,7 +151,8 @@ class Pika(pygame.sprite.Sprite):
             index = self.indexAt / 3
             if index == 4:
                 self.attackingNow = False
-                self.attackLevel = 0
+                self.atLevel = 0
+                self.atSpeed = [0, 0]
             if self.direct:
                 self.image = self.atImgs[index]
             else:
