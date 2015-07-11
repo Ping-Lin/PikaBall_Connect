@@ -13,9 +13,12 @@ class PikaBall(pygame.sprite.Sprite):
     def __init__(self):
         super(PikaBall, self).__init__()
 
-        # ball width and height
+        # ball width and height, and position
         self.width = 80
         self.height = 80
+        self.originPos = [None]*2
+        self.originPos[0] = (gbv.MARGINLEFT, gbv.BALLHEIGHT)
+        self.originPos[1] = (gbv.MARGINRIGHT, gbv.BALLHEIGHT)
 
         # speed and rotate degree
         self.speed = [0, 0]
@@ -23,9 +26,10 @@ class PikaBall(pygame.sprite.Sprite):
         self.rotate = 10
 
         path = 'ball/pikaBall.bmp'
-        self.imageOrigin = loadImage(path, self.width, self.height)
+        self.imageOrigin = loadImg(path, self.width, self.height)
         self.image = self.imageOrigin
-        self.rect = pygame.Rect(gbv.MARGINLEFT, 80, self.width, self.height)
+        self.rect = pygame.Rect(gbv.MARGINLEFT, gbv.BALLHEIGHT,
+                                self.width, self.height)
 
     def checkMovement(self, clickButton, wallList, pikaList):
         """
@@ -38,6 +42,11 @@ class PikaBall(pygame.sprite.Sprite):
 
         self.rotate += -3 * self.speed[0]
         self.image = rotateCenter(self.imageOrigin, self.rotate)
+
+    def moveOrigin(self, direction):
+        pos = self.originPos[direction]
+        self.rect = pygame.Rect(pos[0], pos[1], self.width, self.height)
+        self.speed = [0, 0]
 
     def update(self, clickButton, wallList, pikaList):
         self.checkMovement(clickButton, wallList, pikaList)
@@ -62,6 +71,10 @@ def checkCollision(tmpRect, wallList, pikaList, ballSpeed):
     elif wall == 2:   # up
         return [ballSpeed[0], abs(ballSpeed[1])]
     elif wall == 3:   # down
+        if tmpRect.centerx < gbv.STICKPOS[0]:
+            wallList[wall].ifScore = [False, True]
+        else:
+            wallList[wall].ifScore = [True, False]
         return [ballSpeed[0], -abs(ballSpeed[1])]
     elif wall == 4:   # stickL left and right, and up
         up = pygame.Rect(gbv.STICKPOS[0]-5, gbv.STICKPOS[1],
@@ -88,7 +101,7 @@ def checkCollision(tmpRect, wallList, pikaList, ballSpeed):
                     -35+pikaList[pika].speed[1]*0.3]
 
 
-def loadImage(path, width, height):
+def loadImg(path, width, height):
     """
     load the image, and if the reverse == true then flip
     """

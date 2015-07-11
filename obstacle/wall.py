@@ -14,7 +14,7 @@ class Wall(pygame.sprite.Sprite):
     def __init__(self, rect, img=False):
         super(Wall, self).__init__()
         self.rect = rect
-
+        self.ifScore = [False]*2
         # if there is image upload it
         if img:
             path = 'obstacle/stick.bmp'

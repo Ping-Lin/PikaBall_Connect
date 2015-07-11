@@ -7,6 +7,7 @@ Description: show the main game screen and the game process
 """
 
 import pygame
+import pygame.freetype
 import sys
 from pygame.locals import *
 import gbv
@@ -14,13 +15,11 @@ from character.pika import Pika
 from obstacle.wall import Wall
 from ball.pikaBall import PikaBall
 
-def runGame(spriteGroup, wallList, pikaList, pikaBall):
+def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
     """
     Run the main loop of game
     """
-    clickButton = dict.fromkeys(
-        ['left', 'right', 'up', 'space',
-         'a', 'd', 'w', 'lshift'])
+    global NEWGAME, STARTDELAY
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -67,16 +66,39 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall):
         pikaBall.update(clickButton, wallList, pikaList)
         spriteGroup.draw(DISPLAYSURF)
         pikaBall.draw(DISPLAYSURF)
+
+        # check if score
+        if wallList[3].ifScore[0] or wallList[3].ifScore[1]:
+            if not NEWGAME:
+                txtImgs = setScore(txtImgs, wallList)
+                NEWGAME = True
+
+        DISPLAYSURF.blit(txtImgs[0], (gbv.MARGINLEFT, gbv.BALLHEIGHT+30))
+        DISPLAYSURF.blit(txtImgs[1], (gbv.MARGINRIGHT+30, gbv.BALLHEIGHT+30))
+
+        # check if new game
+        if NEWGAME:
+            setNewGame(pikaList, pikaBall, wallList)
+
         pygame.display.update()
-        CLOCK.tick(40)
+        # a new game start need to delay a time
+        if STARTDELAY != 0:
+            if STARTDELAY == 1000:
+                pygame.time.delay(STARTDELAY)
+                STARTDELAY = 0
+            else:
+                STARTDELAY = 1000
+
+        CLOCK.tick(30)
 
 
 def main():
-    global IMAGE, DISPLAYSURF, CLOCK
+    global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY
     pygame.init()
     DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT))
     pygame.display.set_caption('PikaBall X Connect')
     CLOCK = pygame.time.Clock()
+    FONT = pygame.font.Font(None, 100)
 
     # Load the element
     pikaLeft = Pika(True)
@@ -84,7 +106,7 @@ def main():
     pikaList = [pikaLeft, pikaRight]
     spriteGroup = pygame.sprite.Group(pikaLeft)
     spriteGroup.add(pikaRight)
-    wallList = []   #left, right, up, down and stick
+    wallList = []   # left, right, up, down and stick
     wallList.append(
         Wall(pygame.Rect(0, 0, 1, gbv.WINHEIGHT)))
     wallList.append(
@@ -99,8 +121,52 @@ def main():
             img=True))
     spriteGroup.add(wallList[-1])   # add the stick, need to show
     # spriteGroup.add(wallList)
+
+    # some initial value
+    SCORETXT = [0, 0]
+    clickButton = dict.fromkeys(
+        ['left', 'right', 'up', 'space',
+         'a', 'd', 'w', 'lshift'])
+    txtImgs = [FONT.render("0", 1, (255, 0, 0))]*2
+    NEWGAME = False
+    ALPHA = 0
+    STARTDELAY = 0
     while True:
-        runGame(spriteGroup, wallList, pikaList, PikaBall())
+        runGame(spriteGroup, wallList, pikaList, PikaBall(),
+                clickButton, txtImgs)
+
+
+def setScore(txtImgs, wallList):
+    if wallList[3].ifScore[0]:
+        SCORETXT[0] += 1
+    elif wallList[3].ifScore[1]:
+        SCORETXT[1] += 1
+    txtImgs[0] = FONT.render(str(SCORETXT[0]), 1, (255, 0, 0))
+    txtImgs[1] = FONT.render(str(SCORETXT[1]), 1, (255, 0, 0))
+    return txtImgs
+
+
+def setNewGame(pikaList, pikaBall, wallList):
+    global NEWGAME, ALPHA, STARTDELAY
+    ALPHA += 10
+    background = pygame.Surface(DISPLAYSURF.get_size())
+    background.set_alpha(ALPHA)
+    background.fill((0, 0, 0))
+    if ALPHA >= 255:
+        NEWGAME = False
+        ALPHA = 0
+        # set the ball and pika to origin place
+        for pika in pikaList:
+            pika.moveOrigin()
+        if wallList[3].ifScore[0]:
+            pikaBall.moveOrigin(0)
+        else:
+            pikaBall.moveOrigin(1)
+        wallList[3].ifScore = [False]*2
+        STARTDELAY = 1001
+
+    DISPLAYSURF.blit(background, (0, 0))
+    pygame.time.delay(30)
 
 if __name__ == '__main__':
     main()

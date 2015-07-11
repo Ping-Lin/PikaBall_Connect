@@ -14,28 +14,39 @@ class Pika(pygame.sprite.Sprite):
     def __init__(self, reverse=False):
         super(Pika, self).__init__()
 
-        # pika width and height
+        # pika width and height amd position
         self.width = 128
         self.height = 128
+        if not reverse:
+            self.originPos = (gbv.MARGINRIGHT, gbv.MARGINHEIGHT)
+        else:
+            self.originPos = (gbv.MARGINLEFT, gbv.MARGINHEIGHT)
 
         # Load the pika image: walk, pu, jump
-        self.pikaImages = []
+        self.pikaImgs = []
         for i in xrange(1, 6):
             path = 'character/pikaToRight' + str(i) + '.bmp'
-            self.pikaImages.append(
-                loadImage(path, reverse, self.width, self.height))
+            self.pikaImgs.append(
+                loadImg(path, reverse, self.width, self.height))
 
-        self.pikaPuImages = []
-        for i in xrange(1, 6):
-            j = 3 if i >= 4 else i
+        self.puImgs = [None]*10
+        for i in xrange(1, 11):
+            j = i-5 if i > 5 else i
+            j = 3 if j >= 4 else j
             path = 'character/pikaPu' + str(j) + '.bmp'
-            self.pikaPuImages.append(
-                loadImage(path, False, self.width, self.height))
-        for i in xrange(1, 6):
-            j = 3 if i >= 4 else i
-            path = 'character/pikaPu' + str(j) + '.bmp'
-            self.pikaPuImages.append(
-                loadImage(path, True, self.width, self.height))
+            if i <= 5:
+                self.puImgs[i-1] = loadImg(path, False, self.width, self.height)
+            else:
+                self.puImgs[i-1] = loadImg(path, True, self.width, self.height)
+
+        self.atImgs = [None]*10
+        for i in xrange(1, 11):
+            j = i-5 if i > 5 else i
+            path = 'character/pikaAt' + str(j) + '.bmp'
+            if i <= 5:
+                self.atImgs[i-1] = loadImg(path, False, self.width, self.height)
+            else:
+                self.atImgs[i-1] = loadImg(path, True, self.width, self.height)
 
         # direction and motion
         self.direct = reverse
@@ -45,19 +56,21 @@ class Pika(pygame.sprite.Sprite):
         self.puingNow = False
         self.attack = False
         self.attackingNow = False
+        self.attackLevel = 0
 
-        # speed, gravity and height
+        # speed, gravity and height, and attack Spped
         self.speed = [0, 0]
         self.gravity = gbv.GRAVITY
         self.pikaHeight = 250
         self.pikaV0 = -27
+        self.atSpeed = [0, 0]
 
         # initialize the image and rect
         self.index = 0
         self.indexPu = 0
         self.indexAt = 0
-        self.image = self.pikaImages[self.index]
-        if reverse is False:
+        self.image = self.pikaImgs[self.index]
+        if not reverse:
             self.rect = pygame.Rect(
                 gbv.MARGINRIGHT, gbv.MARGINHEIGHT, self.width, self.height)
         else:
@@ -97,11 +110,17 @@ class Pika(pygame.sprite.Sprite):
             self.jumpingNow = True
         if self.jumpingNow:
             self.speed[1] += self.gravity
+            if self.attack:   # jumping then can attack
+                self.attackingNow = True
+                self.indexAt = 0
+                self.attackLevel += 1
         if self.rect.y + self.speed[1] >= gbv.MARGINHEIGHT:
             self.speed[1] = gbv.MARGINHEIGHT - self.rect.y
             self.jumpingNow = False
 
-        if self.pu and not self.puingNow and not self.jumpingNow:
+        # puing or not
+        if self.pu and not self.puingNow and not self.jumpingNow and \
+                not self.attackingNow:
             self.indexPu = 0
             self.puingNow = True
         if self.puingNow:
@@ -110,11 +129,23 @@ class Pika(pygame.sprite.Sprite):
             if index == 4:
                 self.puingNow = False
             if self.direct and not clickButton["a"] or clickButton["right"]:
-                self.image = self.pikaPuImages[index]
+                self.image = self.puImgs[index]
                 self.speed[0] = 14 if index % 5 <= 2 else 0
             else:
-                self.image = self.pikaPuImages[index + 5]
+                self.image = self.puImgs[index + 5]
                 self.speed[0] = -14 if index % 5 <= 2 else 0
+
+        # attacking or not
+        if self.attackingNow:
+            self.indexAt += 1
+            index = self.indexAt / 3
+            if index == 4:
+                self.attackingNow = False
+                self.attackLevel = 0
+            if self.direct:
+                self.image = self.atImgs[index]
+            else:
+                self.image = self.atImgs[index + 5]
 
         # check for collision
         tmpRect = self.rect.move(self.speed[0], self.speed[1])
@@ -122,6 +153,10 @@ class Pika(pygame.sprite.Sprite):
             self.rect = self.rect.move(0, self.speed[1])
         else:
             self.rect = tmpRect
+
+    def moveOrigin(self):
+        self.rect = pygame.Rect(self.originPos[0], self.originPos[1],
+                                self.width, self.height)
 
     def update(self, clickButton, wallList):
         """
@@ -135,15 +170,15 @@ class Pika(pygame.sprite.Sprite):
 
         self.index += 1
         index = self.index/5
-        if index >= len(self.pikaImages):
+        if index >= len(self.pikaImgs):
             self.index = 0
             index = 0
-        self.image = self.pikaImages[index]
+        self.image = self.pikaImgs[index]
         # check movement
         self.checkMovement(clickButton, wallList)
 
 
-def loadImage(path, reverse, width, height):
+def loadImg(path, reverse, width, height):
     """
     load the image, and if the reverse == true then flip
     """
