@@ -58,12 +58,15 @@ class Pika(pygame.sprite.Sprite):
         self.attackingNow = False
         self.atLevel = 0
 
-        # speed, gravity and height, and attack Spped
+        # now speed, gravity, jump height, attack Speed, constant walk Speed,
+        # current attack, speed, constant attack speed,
         self.speed = [0, 0]
         self.gravity = gbv.GRAVITY
-        self.pikaHeight = 250
-        self.pikaV0 = -27
+        self.pikaHeight = 300
+        self.pikaV0 = -35
+        self.constWalkSpeed = 10
         self.atSpeed = [0, 0]
+        self.constAtSpeed = [15, 2, 30]   #left(right), up and down
 
         # initialize the image and rect
         self.index = 0
@@ -87,30 +90,30 @@ class Pika(pygame.sprite.Sprite):
 
         if not self.direct:
             if clickButton['left']:
-                self.speed[0] -= 10
-                self.atSpeed[0] = -10
+                self.speed[0] -= self.constWalkSpeed
+                self.atSpeed[0] = -self.constAtSpeed[0]
             if clickButton['right']:
-                self.speed[0] += 10
-                self.atSpeed[0] = 10
+                self.speed[0] += self.constWalkSpeed
+                self.atSpeed[0] = self.constAtSpeed[0]
             if clickButton['up']:
                 self.jump = True
-                self.atSpeed[1] = -2
+                self.atSpeed[1] = -self.constAtSpeed[1]
             if clickButton['down']:
-                self.atSpeed[1] = 10
+                self.atSpeed[1] = self.constAtSpeed[2]
             if clickButton['space']:
                 self.attack = self.pu = True
         else:
             if clickButton['a']:
-                self.speed[0] -= 10
-                self.atSpeed[0] = -10
+                self.speed[0] -= self.constWalkSpeed
+                self.atSpeed[0] = -self.constAtSpeed[0]
             if clickButton['d']:
-                self.speed[0] += 10
-                self.atSpeed[0] = 10
+                self.speed[0] += self.constWalkSpeed
+                self.atSpeed[0] = self.constAtSpeed[0]
             if clickButton['w']:
                 self.jump = True
-                self.atSpeed[1] = -2
+                self.atSpeed[1] = -self.constAtSpeed[1]
             if clickButton['s']:
-                self.atSpeed[1] = 10
+                self.atSpeed[1] = self.constAtSpeed[2]
             if clickButton['lshift']:
                 self.attack = self.pu = True
 

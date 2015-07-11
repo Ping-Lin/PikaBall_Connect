@@ -97,7 +97,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
             else:
                 STARTDELAY = 1000
 
-        CLOCK.tick(30)
+        CLOCK.tick(20)
 
 
 def main():

@@ -14,8 +14,8 @@ class PikaBall(pygame.sprite.Sprite):
         super(PikaBall, self).__init__()
 
         # ball width and height, and position
-        self.width = 80
-        self.height = 80
+        self.width = 100
+        self.height = 100
         self.originPos = [None]*2
         self.originPos[0] = (gbv.MARGINLEFT, gbv.BALLHEIGHT)
         self.originPos[1] = (gbv.MARGINRIGHT, gbv.BALLHEIGHT)
@@ -38,6 +38,17 @@ class PikaBall(pygame.sprite.Sprite):
         self.speed[1] += self.gravity
         # check for collision
         self.speed = checkCollision(self.rect, wallList, pikaList, self.speed)
+        # check for the max speed
+        if self.speed[0] >= 70:
+            self.speed[0] = 70
+        elif self.speed[0] <= -70:
+            self.speed[0] = -70
+
+        if self.speed[1] >= 70:
+            self.speed[1] = 70
+        elif self.speed[1] <= -70:
+            self.speed[1] = -70
+
         self.rect = self.rect.move(self.speed[0], self.speed[1])
 
         self.rotate += -3 * self.speed[0]
