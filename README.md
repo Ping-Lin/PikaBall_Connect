@@ -7,6 +7,9 @@
 
 ```p.s: 圖案如果有版權問題請來信告知，會馬上更改```
 
+## Update
+* 增加聲音和背景音樂
+
 ## How to compile and run
 需要先安裝pygame的相關套件, 之後弄比較完整會補上轉好的exe及mac的app檔
 
