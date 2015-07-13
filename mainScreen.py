@@ -14,8 +14,10 @@ import gbv
 from character.pika import Pika
 from obstacle.wall import Wall
 from ball.pikaBall import PikaBall
+import button
 
-def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
+def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
+            buttonGroup):
     """
     Run the main loop of game
     """
@@ -67,16 +69,21 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
                     clickButton['s'] = False
                 elif event.key == pygame.K_LSHIFT:
                     clickButton['lshift'] = False
+            elif event.type == pygame.MOUSEBUTTONUP:
+                clickPos = pygame.mouse.get_pos()
+                buttonGroup.update(clickPos, pikaList)
 
         # draw the image
         DISPLAYSURF.fill(gbv.BGCOLOR)
         spriteGroup.update(clickButton, wallList)
         pikaBall.update(clickButton, wallList, pikaList)
         spriteGroup.draw(DISPLAYSURF)
+        buttonGroup.draw(DISPLAYSURF)
         pikaBall.draw(DISPLAYSURF)
 
         # check if score
         if wallList[3].ifScore[0] or wallList[3].ifScore[1]:
+            wallList[0].pointSound.play()
             if not NEWGAME:
                 txtImgs = setScore(txtImgs, wallList)
                 NEWGAME = True
@@ -96,6 +103,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs):
                 STARTDELAY = 0
             else:
                 STARTDELAY = 1000
+                pygame.mixer.music.unpause()
 
         CLOCK.tick(20)
 
@@ -107,6 +115,7 @@ def main():
     pygame.display.set_caption('PikaBall X Connect')
     CLOCK = pygame.time.Clock()
     FONT = pygame.font.Font(None, 100)
+    pygame.mixer.music.load('bg.wav')
 
     # Load the element
     pikaLeft = Pika(True)
@@ -129,6 +138,10 @@ def main():
             img=True))
     spriteGroup.add(wallList[-1])   # add the stick, need to show
     # spriteGroup.add(wallList)
+    musicButton = button.Button(pygame.Rect(gbv.WINWIDTH-200, 20, 60, 60), 1)
+    soundButton = button.Button(pygame.Rect(gbv.WINWIDTH-100, 20, 60, 60), 2)
+    buttonGroup = pygame.sprite.Group(musicButton)
+    buttonGroup.add(soundButton)
 
     # some initial value
     SCORETXT = [0, 0]
@@ -139,9 +152,10 @@ def main():
     NEWGAME = False
     ALPHA = 0
     STARTDELAY = 0
+    pygame.mixer.music.play(-1, 0.0)
     while True:
         runGame(spriteGroup, wallList, pikaList, PikaBall(),
-                clickButton, txtImgs)
+                clickButton, txtImgs, buttonGroup)
 
 
 def setScore(txtImgs, wallList):
@@ -172,6 +186,7 @@ def setNewGame(pikaList, pikaBall, wallList):
             pikaBall.moveOrigin(1)
         wallList[3].ifScore = [False]*2
         STARTDELAY = 1001
+        pygame.mixer.music.pause()
 
     DISPLAYSURF.blit(background, (0, 0))
     pygame.time.delay(30)
