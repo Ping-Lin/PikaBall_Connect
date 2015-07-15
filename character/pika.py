@@ -8,15 +8,14 @@ Description: pika.py store the information of the pika character
 import pygame
 from pygame.locals import *
 import gbv
-import random
 
 class Pika(pygame.sprite.Sprite):
     def __init__(self, reverse=False):
         super(Pika, self).__init__()
 
         # pika width and height amd position
-        self.width = 128
-        self.height = 128
+        self.width = 180
+        self.height = 180
         if not reverse:
             self.originPos = (gbv.MARGINRIGHT, gbv.MARGINHEIGHT)
         else:
@@ -71,8 +70,8 @@ class Pika(pygame.sprite.Sprite):
         self.speed = [0, 0]
         self.gravity = gbv.GRAVITY
         self.pikaHeight = 300
-        self.pikaV0 = -35
-        self.constWalkSpeed = 10
+        self.pikaV0 = -50
+        self.constWalkSpeed = 18
         self.atSpeed = [0, 0]
         self.constAtSpeed = [15, 2, 30]   #left(right), up and down
 

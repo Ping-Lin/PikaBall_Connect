@@ -71,7 +71,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
                     clickButton['lshift'] = False
             elif event.type == pygame.MOUSEBUTTONUP:
                 clickPos = pygame.mouse.get_pos()
-                buttonGroup.update(clickPos, pikaList)
+                buttonGroup.update(clickPos, pikaList, wallList)
 
         # draw the image
         DISPLAYSURF.fill(gbv.BGCOLOR)

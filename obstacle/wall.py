@@ -23,6 +23,7 @@ class Wall(pygame.sprite.Sprite):
 
         # sound
         self.pointSound = pygame.mixer.Sound('obstacle/point.wav')
+        self.pointSound.set_volume(0.5)
         # color for test
         # self.image = pygame.Surface([self.rect.w, self.rect.h])
         # self.image.fill((0, 0, 255))

@@ -28,7 +28,7 @@ class Button(pygame.sprite.Sprite):
         # initial the image
         self.image = self.images[0]
 
-    def update(self, clickPos, pikaList):
+    def update(self, clickPos, pikaList, wallList):
         if self.rect.collidepoint(clickPos):
             if self.option == 1:
                 if self.ifOpen:
@@ -49,9 +49,11 @@ class Button(pygame.sprite.Sprite):
                 if self.ifOpen:
                     self.ifOpen = False
                     self.image = self.images[1]
+                    wallList[0].pointSound.set_volume(0)
                 else:
                     self.ifOpen = True
                     self.image = self.images[0]
+                    wallList[0].pointSound.set_volume(0.5)
 
 
 def loadImg(path, width, height):
