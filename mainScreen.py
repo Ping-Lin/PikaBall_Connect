@@ -153,9 +153,9 @@ def main():
     ALPHA = 0
     STARTDELAY = 0
     pygame.mixer.music.play(-1, 0.0)
-    while True:
-        runGame(spriteGroup, wallList, pikaList, PikaBall(),
-                clickButton, txtImgs, buttonGroup)
+
+    runGame(spriteGroup, wallList, pikaList, PikaBall(),
+            clickButton, txtImgs, buttonGroup)
 
 
 def setScore(txtImgs, wallList):
