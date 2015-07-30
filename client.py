@@ -40,12 +40,12 @@ class GameClient(object):
         try:
             # Initialize connect to server
             self.connect.sendto('c', (self.addr, self.serverPort))
-            clickList = ['0']*5   # receive click list
+            clickList = ['0']*12   # receive click list
             sendList = ['0']*5   #send click list
             msg = ""   #send msg
             global NEWGAME, STARTDELAY
             while True:
-                clickList = ['0']*10
+                clickList = ['0']*12
                 sendList = ['0']*5
                 # receive the connect data
                 readable, writable, exceptional = (
@@ -71,6 +71,7 @@ class GameClient(object):
                         else:
                             print "Unexpect: {0}".format(msg)
 
+                # received data using
                 if clickList[0] == '1':
                     clickButton['left'] = True
                 if clickList[1] == '1':
@@ -156,7 +157,13 @@ class GameClient(object):
                 # draw the image
                 DISPLAYSURF.fill(gbv.BGCOLOR)
                 spriteGroup.update(clickButton, wallList)
-                pikaBall.update(clickButton, wallList, pikaList)
+
+                if STARTDELAY == 0:
+                    pos = (float(clickList[10]), float(clickList[11]))
+                    pikaBall.update(clickButton, wallList, pikaList, pos)
+                else:
+                    pikaBall.update(clickButton, wallList, pikaList)
+
                 spriteGroup.draw(DISPLAYSURF)
                 buttonGroup.draw(DISPLAYSURF)
                 pikaBall.draw(DISPLAYSURF)
@@ -177,6 +184,7 @@ class GameClient(object):
 
                 pygame.display.update()
                 # a new game start need to delay a time
+
                 if STARTDELAY != 0:
                     if STARTDELAY == 1000:
                         pygame.time.delay(STARTDELAY)
@@ -268,6 +276,7 @@ class GameClient(object):
                 pikaBall.moveOrigin(0)
             else:
                 pikaBall.moveOrigin(1)
+
             wallList[3].ifScore = [False]*2
             STARTDELAY = 1001
             pygame.mixer.music.pause()

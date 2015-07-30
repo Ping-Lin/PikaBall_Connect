@@ -43,7 +43,7 @@ class GameServer(object):
             global NEWGAME, STARTDELAY
             while True:
                 clickList = ['0']*5
-                sendList = ['0']*10
+                sendList = ['0']*12
                 # receive the connect data
                 readable, writable, exceptional = (
                     select.select(self.readList, self.writeList, [], 0)
@@ -137,7 +137,7 @@ class GameServer(object):
                             clickButton['down'] = False
                             sendList[3] = '2'
                         elif event.key == pygame.K_SPACE:
-                            clickButton['spac1e'] = False
+                            clickButton['space'] = False
                             sendList[4] = '2'
                     elif event.type == pygame.MOUSEBUTTONUP:
                         clickPos = pygame.mouse.get_pos()
@@ -146,15 +146,21 @@ class GameServer(object):
                 if not self.start:
                     continue
 
+                # update the image
+                DISPLAYSURF.fill(gbv.BGCOLOR)
+                spriteGroup.update(clickButton, wallList)
+                pikaBall.update(clickButton, wallList, pikaList)
+
+                # send the message
+                ballPos = pikaBall.getPlace()
+                sendList[10] = str(ballPos[0])
+                sendList[11] = str(ballPos[1])
                 msg = ','.join(sendList)
-                if msg != '0,0,0,0,0,0,0,0,0,0':
+                if msg != '0,0,0,0,0,0,0,0,0,0,0,0':
                     # set send message
                     self.connect.sendto(msg, self.clientAddr)
 
                 # draw the image
-                DISPLAYSURF.fill(gbv.BGCOLOR)
-                spriteGroup.update(clickButton, wallList)
-                pikaBall.update(clickButton, wallList, pikaList)
                 spriteGroup.draw(DISPLAYSURF)
                 buttonGroup.draw(DISPLAYSURF)
                 pikaBall.draw(DISPLAYSURF)
@@ -266,6 +272,7 @@ class GameServer(object):
                 pikaBall.moveOrigin(0)
             else:
                 pikaBall.moveOrigin(1)
+
             wallList[3].ifScore = [False]*2
             STARTDELAY = 1001
             pygame.mixer.music.pause()

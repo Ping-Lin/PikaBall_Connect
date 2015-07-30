@@ -33,10 +33,13 @@ class PikaBall(pygame.sprite.Sprite):
         self.rect = pygame.Rect(gbv.MARGINLEFT, gbv.BALLHEIGHT,
                                 self.width, self.height)
 
-    def checkMovement(self, clickButton, wallList, pikaList):
+    def checkMovement(self, clickButton, wallList, pikaList, pos=""):
         """
         check speed and change the speed when collision
         """
+        if pos != "":
+            self.rect = pygame.Rect(pos[0], pos[1], self.width, self.height)
+
         self.speed[1] += self.gravity
         # check for collision
         self.speed = self.checkCollision(self.rect, wallList, pikaList, self.speed)
@@ -52,7 +55,8 @@ class PikaBall(pygame.sprite.Sprite):
         elif self.speed[1] <= -maxSpeed:
             self.speed[1] = -maxSpeed
 
-        self.rect = self.rect.move(self.speed[0], self.speed[1])
+        if pos == "":
+            self.rect = self.rect.move(self.speed[0], self.speed[1])
 
         self.rotate += -3 * self.speed[0]
         self.image = rotateCenter(self.imageOrigin, self.rotate)
@@ -63,12 +67,15 @@ class PikaBall(pygame.sprite.Sprite):
         self.speed = [0, 0]
 
     def checkPlace(self):
+        """
+        check if the ball is out of the window's position
+        """
         if self.rect.x > gbv.WINWIDTH or self.rect.x < -self.width:
             if self.rect.y < -self.height or self.rect.y > gbv.WINHEIGHT:
                 self.moveOrigin(random.randint(0, 1))
 
-    def update(self, clickButton, wallList, pikaList):
-        self.checkMovement(clickButton, wallList, pikaList)
+    def update(self, clickButton, wallList, pikaList, pos=""):
+        self.checkMovement(clickButton, wallList, pikaList, pos)
         self.checkPlace()
 
     def draw(self, DISPLAYSURF):
@@ -130,6 +137,13 @@ class PikaBall(pygame.sprite.Sprite):
                         atSpeed[0], -50+pikaList[pika].speed[1]*0.3+atSpeed[1]]
 
         return ballSpeed
+    
+    def getPlace(self):
+        """
+        for the connect using, because server need to send the message to client
+        to get the position
+        """
+        return (self.rect.x, self.rect.y)
 
 def loadImg(path, width, height):
     """
