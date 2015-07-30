@@ -37,12 +37,13 @@ class GameServer(object):
         """
         print "waiting......"
         try:
-            clickList = [None]*5   # receive click list
+            clickList = ['0']*5   # receive click list
             sendList = ['0']*5   #send click list
             msg = ""   #send msg
             global NEWGAME, STARTDELAY
             while True:
-                sendList = ['0']*5
+                clickList = ['0']*5
+                sendList = ['0']*10
                 # receive the connect data
                 readable, writable, exceptional = (
                     select.select(self.readList, self.writeList, [], 0)
@@ -71,24 +72,35 @@ class GameServer(object):
 
                 if clickList[0] == '1':
                     clickButton['a'] = True
+                    sendList[5] = '1'
                 if clickList[1] == '1':
                     clickButton['d'] = True
+                    sendList[6] = '1'
                 if clickList[2] == '1':
                     clickButton['w'] = True
+                    sendList[7] = '1'
                 if clickList[3] == '1':
                     clickButton['s'] = True
+                    sendList[8] = '1'
                 if clickList[4] == '1':
                     clickButton['lshift'] = True
+                    sendList[9] = '1'
+
                 if clickList[0] == '2':
                     clickButton['a'] = False
+                    sendList[5] = '2'
                 if clickList[1] == '2':
                     clickButton['d'] = False
+                    sendList[6] = '2'
                 if clickList[2] == '2':
                     clickButton['w'] = False
+                    sendList[7] = '2'
                 if clickList[3] == '2':
                     clickButton['s'] = False
+                    sendList[8] = '2'
                 if clickList[4] == '2':
                     clickButton['lshift'] = False
+                    sendList[9] = '2'
 
                 for event in pygame.event.get():
                     if event.type == QUIT:
@@ -125,7 +137,7 @@ class GameServer(object):
                             clickButton['down'] = False
                             sendList[3] = '2'
                         elif event.key == pygame.K_SPACE:
-                            clickButton['space'] = False
+                            clickButton['spac1e'] = False
                             sendList[4] = '2'
                     elif event.type == pygame.MOUSEBUTTONUP:
                         clickPos = pygame.mouse.get_pos()
@@ -134,9 +146,9 @@ class GameServer(object):
                 if not self.start:
                     continue
 
-                # set send message
-                if sendList:
-                    msg = ','.join(sendList)
+                msg = ','.join(sendList)
+                if msg != '0,0,0,0,0,0,0,0,0,0':
+                    # set send message
                     self.connect.sendto(msg, self.clientAddr)
 
                 # draw the image

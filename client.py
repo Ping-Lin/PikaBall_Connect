@@ -40,11 +40,12 @@ class GameClient(object):
         try:
             # Initialize connect to server
             self.connect.sendto('c', (self.addr, self.serverPort))
-            clickList = [None]*5   # receive click list
+            clickList = ['0']*5   # receive click list
             sendList = ['0']*5   #send click list
             msg = ""   #send msg
             global NEWGAME, STARTDELAY
             while True:
+                clickList = ['0']*10
                 sendList = ['0']*5
                 # receive the connect data
                 readable, writable, exceptional = (
@@ -80,6 +81,17 @@ class GameClient(object):
                     clickButton['down'] = True
                 if clickList[4] == '1':
                     clickButton['space'] = True
+                if clickList[5] == '1':
+                    clickButton['a'] = True
+                if clickList[6] == '1':
+                    clickButton['d'] = True
+                if clickList[7] == '1':
+                    clickButton['w'] = True
+                if clickList[8] == '1':
+                    clickButton['s'] = True
+                if clickList[9] == '1':
+                    clickButton['lshift'] = True
+
                 if clickList[0] == '2':
                     clickButton['left'] = False
                 if clickList[1] == '2':
@@ -90,6 +102,17 @@ class GameClient(object):
                     clickButton['down'] = False
                 if clickList[4] == '2':
                     clickButton['space'] = False
+                if clickList[5] == '2':
+                    clickButton['a'] = False
+                if clickList[6] == '2':
+                    clickButton['d'] = False
+                if clickList[7] == '2':
+                    clickButton['w'] = False
+                if clickList[8] == '2':
+                    clickButton['s'] = False
+                if clickList[9] == '2':
+                    clickButton['lshift'] = False
+
 
                 for event in pygame.event.get():
                     if event.type == QUIT:
@@ -98,35 +121,25 @@ class GameClient(object):
                         sys.exit()
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_a:
-                            clickButton['a'] = True
                             sendList[0] = '1'
                         elif event.key == pygame.K_d:
-                            clickButton['d'] = True
                             sendList[1] = '1'
                         elif event.key == pygame.K_w:
-                            clickButton['w'] = True
                             sendList[2] = '1'
                         elif event.key == pygame.K_s:
-                            clickButton['s'] = True
                             sendList[3] = '1'
                         elif event.key == pygame.K_LSHIFT:
-                            clickButton['lshift'] = True
                             sendList[4] = '1'
                     elif event.type == pygame.KEYUP:
                         if event.key == pygame.K_a:
-                            clickButton['a'] = False
                             sendList[0] = '2'
                         elif event.key == pygame.K_d:
-                            clickButton['d'] = False
                             sendList[1] = '2'
                         elif event.key == pygame.K_w:
-                            clickButton['w'] = False
                             sendList[2] = '2'
                         elif event.key == pygame.K_s:
-                            clickButton['s'] = False
                             sendList[3] = '2'
                         elif event.key == pygame.K_LSHIFT:
-                            clickButton['lshift'] = False
                             sendList[4] = '2'
                     elif event.type == pygame.MOUSEBUTTONUP:
                         clickPos = pygame.mouse.get_pos()
@@ -135,9 +148,9 @@ class GameClient(object):
                 if not self.start:
                     continue
 
-                # set send message
-                if sendList:
-                    msg = ','.join(sendList)
+                msg = ','.join(sendList)
+                if msg != '0,0,0,0,0':
+                    # set send message
                     self.connect.sendto(msg, (self.addr, self.serverPort))
 
                 # draw the image
