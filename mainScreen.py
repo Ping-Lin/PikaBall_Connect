@@ -108,7 +108,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
                 STARTDELAY = 1000
                 pygame.mixer.music.unpause()
 
-        CLOCK.tick(20)
+        CLOCK.tick(40)
 
 
 def main():

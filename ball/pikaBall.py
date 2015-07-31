@@ -9,14 +9,15 @@ Description: ball class, set up the collision and the speed whatever
 import pygame
 import gbv
 import random
+import math 
 
 class PikaBall(pygame.sprite.Sprite):
     def __init__(self):
         super(PikaBall, self).__init__()
 
         # ball width and height, and position, and ifstickcollision
-        self.width = 120
-        self.height = 120
+        self.width = 110
+        self.height = 110
         self.originPos = [None]*2
         self.originPos[0] = (gbv.MARGINLEFT, gbv.BALLHEIGHT)
         self.originPos[1] = (gbv.MARGINRIGHT, gbv.BALLHEIGHT)
@@ -125,16 +126,19 @@ class PikaBall(pygame.sprite.Sprite):
 
         # check the pika collision
         if pika != -1:
-            # check for ball direction
-            horizon = (pikaList[pika].rect.centerx-tmpRect.centerx)*0.35
-            atSpeed = [speed*pikaList[pika].atLevel for speed in
-                       pikaList[pika].atSpeed]
-            if horizon < 0:
-                return [abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05+\
-                        atSpeed[0], -50+pikaList[pika].speed[1]*0.3+atSpeed[1]]
-            else:
-                return [-abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05+\
-                        atSpeed[0], -50+pikaList[pika].speed[1]*0.3+atSpeed[1]]
+            dist = abs(pikaList[pika].rect.centerx - tmpRect.centerx)**2+abs(pikaList[pika].rect.centery - tmpRect.centery)**2
+            dist = math.sqrt(dist)
+            if dist <= 100:
+                # check for ball direction
+                horizon = (pikaList[pika].rect.centerx-tmpRect.centerx)*0.35
+                atSpeed = [speed*pikaList[pika].atLevel for speed in
+                           pikaList[pika].atSpeed]
+                if horizon < 0:
+                    return [abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05+\
+                            atSpeed[0], -50+pikaList[pika].speed[1]*0.3+atSpeed[1]]
+                else:
+                    return [-abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05+\
+                            atSpeed[0], -50+pikaList[pika].speed[1]*0.3+atSpeed[1]]
 
         return ballSpeed
     

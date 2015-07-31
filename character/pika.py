@@ -47,6 +47,15 @@ class Pika(pygame.sprite.Sprite):
             else:
                 self.atImgs[i-1] = loadImg(path, True, self.width, self.height)
 
+        self.jpImgs = [None]*10
+        for i in xrange(1, 11):
+            j = i-5 if i > 5 else i
+            path = 'character/jump' + str(j) + '.bmp'
+            if i <= 5:
+                self.jpImgs[i-1] = loadImg(path, False, self.width, self.height)
+            else:
+                self.jpImgs[i-1] = loadImg(path, True, self.width, self.height)
+
         # sound, pu, attack
         self.sound = [None]*2
         self.sound[0] = pygame.mixer.Sound('character/pu.wav')
@@ -71,14 +80,16 @@ class Pika(pygame.sprite.Sprite):
         self.gravity = gbv.GRAVITY
         self.pikaHeight = 300
         self.pikaV0 = -50
-        self.constWalkSpeed = 18
+        self.constWalkSpeed = 25
         self.atSpeed = [0, 0]
         self.constAtSpeed = [15, 2, 30]   #left(right), up and down
+        self.puWidth = 25
 
         # initialize the image and rect
         self.index = 0
         self.indexPu = 0
         self.indexAt = 0
+        self.indexjp = 0
         self.image = self.pikaImgs[self.index]
         if not reverse:
             self.rect = pygame.Rect(
@@ -128,8 +139,18 @@ class Pika(pygame.sprite.Sprite):
         if self.jump and not self.jumpingNow and not self.puingNow:
             self.speed[1] = self.pikaV0
             self.jumpingNow = True
+            self.indexjp = 0
         if self.jumpingNow:
             self.speed[1] += self.gravity
+            self.indexjp += 1
+            if self.indexjp > 5:
+                self.indexjp = 0
+            index = self.indexjp / 2
+            if self.direct:
+                self.image = self.jpImgs[index]
+            else:
+                self.image = self.jpImgs[index + 5]
+            
             if self.attack:   # jumping then can attack
                 self.attackingNow = True
                 self.sound[1].play()
@@ -152,10 +173,10 @@ class Pika(pygame.sprite.Sprite):
                 self.puingNow = False
             if self.direct and not clickButton["a"] or clickButton["right"]:
                 self.image = self.puImgs[index]
-                self.speed[0] = 14 if index % 5 <= 2 else 0
+                self.speed[0] = self.puWidth if index % 5 <= 2 else 0
             else:
                 self.image = self.puImgs[index + 5]
-                self.speed[0] = -14 if index % 5 <= 2 else 0
+                self.speed[0] = -self.puWidth if index % 5 <= 2 else 0
 
         # attacking or not
         if self.attackingNow:
