@@ -58,7 +58,7 @@ class PikaBall(pygame.sprite.Sprite):
         if pos == "":
             self.rect = self.rect.move(self.speed[0], self.speed[1])
 
-        self.rotate += -3 * self.speed[0]
+        self.rotate += -1 * self.speed[0]
         self.image = rotateCenter(self.imageOrigin, self.rotate)
 
     def moveOrigin(self, direction):

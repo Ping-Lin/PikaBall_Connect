@@ -22,6 +22,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
     Run the main loop of game
     """
     global NEWGAME, STARTDELAY
+    background = pygame.image.load('bg.bmp')
+    background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -74,7 +76,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
                 buttonGroup.update(clickPos, pikaList, wallList)
 
         # draw the image
-        DISPLAYSURF.fill(gbv.BGCOLOR)
+
+        DISPLAYSURF.blit(background, (0, 0))
         spriteGroup.update(clickButton, wallList)
         pikaBall.update(clickButton, wallList, pikaList)
         spriteGroup.draw(DISPLAYSURF)
@@ -88,8 +91,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
                 txtImgs = setScore(txtImgs, wallList)
                 NEWGAME = True
 
-        DISPLAYSURF.blit(txtImgs[0], (gbv.MARGINLEFT, gbv.BALLHEIGHT+30))
-        DISPLAYSURF.blit(txtImgs[1], (gbv.MARGINRIGHT+30, gbv.BALLHEIGHT+30))
+        DISPLAYSURF.blit(txtImgs[0], (gbv.POINTLEFT, gbv.POINTHEIGHT))
+        DISPLAYSURF.blit(txtImgs[1], (gbv.POINTRIGHT, gbv.POINTHEIGHT))
 
         # check if new game
         if NEWGAME:
@@ -115,6 +118,7 @@ def main():
     pygame.display.set_caption('PikaBall X Connect')
     CLOCK = pygame.time.Clock()
     FONT = pygame.font.Font(None, 100)
+    FONT.set_italic(True)
     pygame.mixer.music.load('bg.wav')
 
     # Load the element
