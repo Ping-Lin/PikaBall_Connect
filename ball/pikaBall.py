@@ -9,7 +9,7 @@ Description: ball class, set up the collision and the speed whatever
 import pygame
 import gbv
 import random
-import math 
+import math
 
 class PikaBall(pygame.sprite.Sprite):
     def __init__(self):
@@ -26,9 +26,9 @@ class PikaBall(pygame.sprite.Sprite):
         # speed and rotate degree
         self.speed = [0, 0]
         self.gravity = gbv.GRAVITY
-        self.rotate = 10
+        self.rotate = 5
 
-        path = 'ball/pikaBall.bmp'
+        path = 'ball/pikaBall.png'
         self.imageOrigin = loadImg(path, self.width, self.height)
         self.image = self.imageOrigin
         self.rect = pygame.Rect(gbv.MARGINLEFT, gbv.BALLHEIGHT,
@@ -45,16 +45,6 @@ class PikaBall(pygame.sprite.Sprite):
         # check for collision
         self.speed = self.checkCollision(self.rect, wallList, pikaList, self.speed)
         # check for the max speed
-        maxSpeed = 100
-        if self.speed[0] >= maxSpeed:
-            self.speed[0] = maxSpeed
-        elif self.speed[0] <= -maxSpeed:
-            self.speed[0] = -maxSpeed
-
-        if self.speed[1] >= maxSpeed:
-            self.speed[1] = maxSpeed
-        elif self.speed[1] <= -maxSpeed:
-            self.speed[1] = -maxSpeed
 
         if pos == "":
             self.rect = self.rect.move(self.speed[0], self.speed[1])
@@ -71,8 +61,8 @@ class PikaBall(pygame.sprite.Sprite):
         """
         check if the ball is out of the window's position
         """
-        if self.rect.x > gbv.WINWIDTH or self.rect.x < -self.width:
-            if self.rect.y < -self.height or self.rect.y > gbv.WINHEIGHT:
+        if self.rect.x > gbv.WINWIDTH or self.rect.x < -self.width or\
+           self.rect.y < -self.height or self.rect.y > gbv.WINHEIGHT:
                 self.moveOrigin(random.randint(0, 1))
 
     def update(self, clickButton, wallList, pikaList, pos=""):
@@ -93,18 +83,13 @@ class PikaBall(pygame.sprite.Sprite):
             if wall != 4:
                 self.ifStickCollision = False
 
-        ballSpeed[0] *= 0.9
-        ballSpeed[1] *= 0.9
         if wall == 0:   # left
-            if tmpRect.centerx <= 0:
-                return [abs(ballSpeed[0])+tmpRect.centerx, ballSpeed[1]]
-            else:
-                return [abs(ballSpeed[0]), ballSpeed[1]]
+            return [abs(ballSpeed[0]), ballSpeed[1]]
         elif wall == 1 or tmpRect.centerx >= gbv.WINWIDTH:   # right
             return [-abs(ballSpeed[0]), ballSpeed[1]]
-        elif wall == 2 or tmpRect.centery <= 0:   # up
+        elif wall == 2 or tmpRect.top <= 0:   # up
             return [ballSpeed[0], abs(ballSpeed[1])]
-        elif wall == 3 or tmpRect.centery >= gbv.WINHEIGHT:   # down
+        elif wall == 3 or tmpRect.bottom >= gbv.WINHEIGHT:   # down
             if tmpRect.centerx < gbv.STICKPOS[0]:
                 wallList[wall].ifScore = [False, True]
             else:
@@ -126,9 +111,10 @@ class PikaBall(pygame.sprite.Sprite):
 
         # check the pika collision
         if pika != -1:
+            self.speed = [0, 0]
             dist = abs(pikaList[pika].rect.centerx - tmpRect.centerx)**2+abs(pikaList[pika].rect.centery - tmpRect.centery)**2
             dist = math.sqrt(dist)
-            if dist <= 100:
+            if dist <= 150:
                 # check for ball direction
                 horizon = (pikaList[pika].rect.centerx-tmpRect.centerx)*0.35
                 atSpeed = [speed*pikaList[pika].atLevel for speed in
@@ -141,7 +127,7 @@ class PikaBall(pygame.sprite.Sprite):
                             atSpeed[0], -50+pikaList[pika].speed[1]*0.3+atSpeed[1]]
 
         return ballSpeed
-    
+
     def getPlace(self):
         """
         for the connect using, because server need to send the message to client
@@ -153,10 +139,8 @@ def loadImg(path, width, height):
     """
     load the image, and if the reverse == true then flip
     """
-    image = pygame.image.load(path).convert()
+    image = pygame.image.load(path).convert_alpha()
     image = pygame.transform.scale(image, (width, height))
-    transColor = image.get_at((0, 0))
-    image.set_colorkey(transColor)
     return image
 
 

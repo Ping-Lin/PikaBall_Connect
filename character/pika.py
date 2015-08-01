@@ -150,7 +150,7 @@ class Pika(pygame.sprite.Sprite):
                 self.image = self.jpImgs[index]
             else:
                 self.image = self.jpImgs[index + 5]
-            
+
             if self.attack:   # jumping then can attack
                 self.attackingNow = True
                 self.sound[1].play()

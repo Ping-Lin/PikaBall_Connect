@@ -19,11 +19,11 @@ class Button(pygame.sprite.Sprite):
         self.images = []
 
         if option == 1:   # stop the sound
-            self.images.append(loadImg("musicOn.bmp", rect.w, rect.h))
-            self.images.append(loadImg("musicOff.bmp", rect.w, rect.h))
+            self.images.append(loadImg("musicOn.png", rect.w, rect.h))
+            self.images.append(loadImg("musicOff.png", rect.w, rect.h))
         elif option == 2:   # stop the music
-            self.images.append(loadImg("soundOn.bmp", rect.w, rect.h))
-            self.images.append(loadImg("soundOff.bmp", rect.w, rect.h))
+            self.images.append(loadImg("soundOn.png", rect.w, rect.h))
+            self.images.append(loadImg("soundOff.png", rect.w, rect.h))
 
         # initial the image
         self.image = self.images[0]
@@ -60,8 +60,6 @@ def loadImg(path, width, height):
     """
     load the image
     """
-    image = pygame.image.load(path).convert()
+    image = pygame.image.load(path).convert_alpha()
     image = pygame.transform.scale(image, (width, height))
-    transColor = image.get_at((0, 0))
-    image.set_colorkey(transColor)
     return image

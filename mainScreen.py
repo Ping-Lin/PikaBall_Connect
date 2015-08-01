@@ -22,15 +22,24 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
     Run the main loop of game
     """
     global NEWGAME, STARTDELAY
-    background = pygame.image.load('bg.bmp')
+    background = pygame.image.load('bg.jpg').convert()
     background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
+    pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP, MOUSEBUTTONUP])   # improve the FPS
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_F1:
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == pygame.K_F2:
+                    if DISPLAYSURF.get_flags() & FULLSCREEN:
+                        pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), DOUBLEBUF, 0)
+                    else:
+                        pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), FLAGS, 0)
+                elif event.key == pygame.K_LEFT:
                     clickButton['left'] = True
                 elif event.key == pygame.K_RIGHT:
                     clickButton['right'] = True
@@ -71,7 +80,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
                     clickButton['s'] = False
                 elif event.key == pygame.K_LSHIFT:
                     clickButton['lshift'] = False
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == MOUSEBUTTONUP:
                 clickPos = pygame.mouse.get_pos()
                 buttonGroup.update(clickPos, pikaList, wallList)
 
@@ -97,6 +106,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
         # check if new game
         if NEWGAME:
             setNewGame(pikaList, pikaBall, wallList)
+        else:
+            DISPLAYSURF.set_alpha(None)   # improve the FPS
 
         pygame.display.update()
         # a new game start need to delay a time
@@ -108,13 +119,16 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
                 STARTDELAY = 1000
                 pygame.mixer.music.unpause()
 
+        print CLOCK.get_fps()
         CLOCK.tick(40)
 
 
 def main():
-    global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY
+    global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY, FLAGS
     pygame.init()
-    DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT))
+    FLAGS = FULLSCREEN | DOUBLEBUF
+    DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), FLAGS, 0)
+    DISPLAYSURF.set_alpha(None)
     pygame.display.set_caption('PikaBall X Connect')
     CLOCK = pygame.time.Clock()
     FONT = pygame.font.Font(None, 100)
@@ -135,7 +149,7 @@ def main():
     wallList.append(
         Wall(pygame.Rect(0, 0, gbv.WINWIDTH, 10)))
     wallList.append(
-        Wall(pygame.Rect(0, gbv.WINHEIGHT, gbv.WINWIDTH, 500)))
+        Wall(pygame.Rect(0, gbv.WINHEIGHT-20, gbv.WINWIDTH, 500)))
     wallList.append(
         Wall(pygame.Rect(
             gbv.STICKPOS[0], gbv.STICKPOS[1], gbv.STICKWIDTH, gbv.STICKHEIGHT),
