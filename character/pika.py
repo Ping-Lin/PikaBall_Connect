@@ -14,8 +14,8 @@ class Pika(pygame.sprite.Sprite):
         super(Pika, self).__init__()
 
         # pika width and height amd position
-        self.width = 180
-        self.height = 180
+        self.width = gbv.PIKAWIDTH
+        self.height = gbv.PIKAHEIGHT
         if not reverse:
             self.originPos = (gbv.MARGINRIGHT, gbv.MARGINHEIGHT)
         else:
@@ -38,11 +38,11 @@ class Pika(pygame.sprite.Sprite):
             else:
                 self.puImgs[i-1] = loadImg(path, True, self.width, self.height)
 
-        self.atImgs = [None]*12
-        for i in xrange(1, 13):
-            j = i-6 if i > 6 else i
+        self.atImgs = [None]*10
+        for i in xrange(1, 11):
+            j = i-5 if i > 5 else i
             path = 'character/pikaAt' + str(j) + '.bmp'
-            if i <= 6:
+            if i <= 5:
                 self.atImgs[i-1] = loadImg(path, False, self.width, self.height)
             else:
                 self.atImgs[i-1] = loadImg(path, True, self.width, self.height)
@@ -68,7 +68,7 @@ class Pika(pygame.sprite.Sprite):
         self.jump = False
         self.jumpingNow = False
         self.pu = False
-        self.puingNow = False
+        self.puingNow = 0
         self.attack = False
         self.attackingNow = False
         self.atLevel = 0
@@ -79,11 +79,11 @@ class Pika(pygame.sprite.Sprite):
         self.speed = [0, 0]
         self.gravity = gbv.GRAVITY
         self.pikaHeight = 300
-        self.pikaV0 = -50
-        self.constWalkSpeed = 25
+        self.pikaV0 = -25
+        self.constWalkSpeed = 13
         self.atSpeed = [0, 0]
-        self.constAtSpeed = [15, 2, 30]   #left(right), up and down
-        self.puWidth = 25
+        self.constAtSpeed = [40, 30, 35]   #left(right), up and down
+        self.puWidth = 15
 
         # initialize the image and rect
         self.index = 0
@@ -108,32 +108,38 @@ class Pika(pygame.sprite.Sprite):
 
         if not self.direct:
             if clickButton['left']:
-                self.speed[0] -= self.constWalkSpeed
-                self.atSpeed[0] = -self.constAtSpeed[0]
+                self.speed[0] = -self.constWalkSpeed
+                self.atSpeed[0] = self.constAtSpeed[0]
             if clickButton['right']:
-                self.speed[0] += self.constWalkSpeed
+                self.speed[0] = self.constWalkSpeed
                 self.atSpeed[0] = self.constAtSpeed[0]
             if clickButton['up']:
                 self.jump = True
                 self.atSpeed[1] = -self.constAtSpeed[1]
+                self.atSpeed[0] = self.constAtSpeed[0]/2
             if clickButton['down']:
                 self.atSpeed[1] = self.constAtSpeed[2]
             if clickButton['space']:
                 self.attack = self.pu = True
+                if self.atSpeed[0] == 0 and self.atSpeed[1] == 0:
+                    self.atSpeed[0] = self.constAtSpeed[0]/2
         else:
             if clickButton['a']:
-                self.speed[0] -= self.constWalkSpeed
-                self.atSpeed[0] = -self.constAtSpeed[0]
+                self.speed[0] = -self.constWalkSpeed
+                self.atSpeed[0] = self.constAtSpeed[0]
             if clickButton['d']:
-                self.speed[0] += self.constWalkSpeed
+                self.speed[0] = self.constWalkSpeed
                 self.atSpeed[0] = self.constAtSpeed[0]
             if clickButton['w']:
                 self.jump = True
                 self.atSpeed[1] = -self.constAtSpeed[1]
+                self.atSpeed[0] = self.constAtSpeed[0]/2
             if clickButton['s']:
                 self.atSpeed[1] = self.constAtSpeed[2]
             if clickButton['lshift']:
                 self.attack = self.pu = True
+                if self.atSpeed[0] == 0 and self.atSpeed[1] == 0:
+                    self.atSpeed[0] = self.constAtSpeed[0]/2
 
         # jumping or not
         if self.jump and not self.jumpingNow and not self.puingNow:
@@ -151,7 +157,7 @@ class Pika(pygame.sprite.Sprite):
             else:
                 self.image = self.jpImgs[index + 5]
 
-            if self.attack:   # jumping then can attack
+            if self.attack and not self.attackingNow:   # jumping then can attack
                 self.attackingNow = True
                 self.sound[1].play()
                 self.indexAt = 0
@@ -161,17 +167,19 @@ class Pika(pygame.sprite.Sprite):
             self.jumpingNow = False
 
         # puing or not
-        if self.pu and not self.puingNow and not self.jumpingNow and \
-                not self.attackingNow:
+        if self.pu and not self.puingNow and not self.jumpingNow and not self.attackingNow:
             self.indexPu = 0
-            self.puingNow = True
+            if clickButton["d"] or clickButton["right"]:
+                self.puingNow = 1
+            else:
+                self.puingNow = 2
             self.sound[0].play()
         if self.puingNow:
             self.indexPu += 1
-            index = self.indexPu / 3
+            index = self.indexPu / 7
             if index == 4:
-                self.puingNow = False
-            if self.direct and not clickButton["a"] or clickButton["right"]:
+                self.puingNow = 0
+            if self.puingNow == 1:
                 self.image = self.puImgs[index]
                 self.speed[0] = self.puWidth if index % 5 <= 2 else 0
             else:
@@ -181,11 +189,13 @@ class Pika(pygame.sprite.Sprite):
         # attacking or not
         if self.attackingNow:
             self.indexAt += 1
-            index = self.indexAt / 3
-            if index == 5:
+            index = self.indexAt / 5
+            if index == 4:
                 self.attackingNow = False
                 self.atLevel = 0
                 self.atSpeed = [0, 0]
+            # set attack level, but now don't use
+            newIndex = 0
             if index == 0:
                 self.atLevelId += 1
                 if self.atLevelId >= 10:
@@ -200,7 +210,7 @@ class Pika(pygame.sprite.Sprite):
             if self.direct:
                 self.image = self.atImgs[newIndex]
             else:
-                self.image = self.atImgs[newIndex + 6]
+                self.image = self.atImgs[newIndex + 5]
 
         # check for collision
         tmpRect = self.rect.move(self.speed[0], self.speed[1])
@@ -222,6 +232,7 @@ class Pika(pygame.sprite.Sprite):
         self.jump = False
         self.pu = False
         self.attack = False
+        self.atSpeed = [0, 0]
 
         self.index += 1
         index = self.index/5

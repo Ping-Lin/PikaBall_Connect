@@ -16,12 +16,15 @@ class PikaBall(pygame.sprite.Sprite):
         super(PikaBall, self).__init__()
 
         # ball width and height, and position, and ifstickcollision
-        self.width = 110
-        self.height = 110
+        self.width = 95
+        self.height = 95
         self.originPos = [None]*2
         self.originPos[0] = (gbv.MARGINLEFT, gbv.BALLHEIGHT)
         self.originPos[1] = (gbv.MARGINRIGHT, gbv.BALLHEIGHT)
         self.ifStickCollision = False
+        self.historyPos = [None]*3
+        self.historyPosIndex = 0
+        self.historyPosIndexDelay = 0   #how many frame need to record one time
 
         # speed and rotate degree
         self.speed = [0, 0]
@@ -30,6 +33,7 @@ class PikaBall(pygame.sprite.Sprite):
 
         path = 'ball/pikaBall.png'
         self.imageOrigin = loadImg(path, self.width, self.height)
+        self.imageHist = loadImg('ball/pikaBall.bmp', self.width, self.height)
         self.image = self.imageOrigin
         self.rect = pygame.Rect(gbv.MARGINLEFT, gbv.BALLHEIGHT,
                                 self.width, self.height)
@@ -68,10 +72,22 @@ class PikaBall(pygame.sprite.Sprite):
     def update(self, clickButton, wallList, pikaList, pos=""):
         self.checkMovement(clickButton, wallList, pikaList, pos)
         self.checkPlace()
+        self.historyPos[self.historyPosIndex] = (self.rect.x, self.rect.y)
+
+        self.historyPosIndexDelay += 1
+        if self.historyPosIndexDelay % 3 == 0:
+            self.historyPosIndex += 1
+        if self.historyPosIndex > 2:
+            self.historyPosIndex = 0
 
     def draw(self, DISPLAYSURF):
         DISPLAYSURF.blit(self.image, self.rect)
 
+    def drawHistory(self, DISPLAYSURF):
+        for hist in self.historyPos:
+            if hist:
+                tmpRect = pygame.Rect(hist[0], hist[1], self.width, self.height)
+                DISPLAYSURF.blit(addAlpha(self.imageHist, 100), tmpRect)
 
     def checkCollision(self, tmpRect, wallList, pikaList, ballSpeed):
         wall = tmpRect.collidelist(wallList)
@@ -111,20 +127,27 @@ class PikaBall(pygame.sprite.Sprite):
 
         # check the pika collision
         if pika != -1:
-            self.speed = [0, 0]
             dist = abs(pikaList[pika].rect.centerx - tmpRect.centerx)**2+abs(pikaList[pika].rect.centery - tmpRect.centery)**2
             dist = math.sqrt(dist)
-            if dist <= 150:
-                # check for ball direction
-                horizon = (pikaList[pika].rect.centerx-tmpRect.centerx)*0.35
-                atSpeed = [speed*pikaList[pika].atLevel for speed in
-                           pikaList[pika].atSpeed]
-                if horizon < 0:
-                    return [abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05+\
-                            atSpeed[0], -50+pikaList[pika].speed[1]*0.3+atSpeed[1]]
+            if dist <= 100:
+                horizon = (pikaList[pika].rect.centerx-tmpRect.centerx)*(-0.1)
+                if pikaList[pika].direct:
+                    horizon += 5*random.randrange(7, 11, 1)*0.1
                 else:
-                    return [-abs(horizon)+ballSpeed[0]+pikaList[pika].speed[0]*0.05+\
-                            atSpeed[0], -50+pikaList[pika].speed[1]*0.3+atSpeed[1]]
+                    horizon -= 5
+
+                # check if pika is attack or jump or not
+                if pikaList[pika].attackingNow:
+                    # atSpeed = [speed*pikaList[pika].atLevel for speed in pikaList[pika].atSpeed]
+                    if pikaList[pika].direct:
+                        return pikaList[pika].atSpeed
+                    else:
+                        return [-pikaList[pika].atSpeed[0], pikaList[pika].atSpeed[1]]
+                elif pikaList[pika].jumpingNow:
+                    return [horizon, -25]
+                else:
+                    # check for ball direction
+                    return [horizon, -30]
 
         return ballSpeed
 
@@ -135,14 +158,23 @@ class PikaBall(pygame.sprite.Sprite):
         """
         return (self.rect.x, self.rect.y)
 
+
 def loadImg(path, width, height):
     """
     load the image, and if the reverse == true then flip
     """
     image = pygame.image.load(path).convert_alpha()
     image = pygame.transform.scale(image, (width, height))
+    image.set_alpha(10)
+    transColor = image.get_at((0, 0))
+    image.set_colorkey(transColor)
     return image
 
+
+def addAlpha(image, alpha):
+    newImage = image.convert()
+    newImage.set_alpha(alpha)
+    return newImage
 
 def rotateCenter(image, angle):
     """rotate an image while keeping its center and size"""

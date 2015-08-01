@@ -91,6 +91,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
         pikaBall.update(clickButton, wallList, pikaList)
         spriteGroup.draw(DISPLAYSURF)
         buttonGroup.draw(DISPLAYSURF)
+        pikaBall.drawHistory(DISPLAYSURF)
         pikaBall.draw(DISPLAYSURF)
 
         # check if score
@@ -149,11 +150,10 @@ def main():
     wallList.append(
         Wall(pygame.Rect(0, 0, gbv.WINWIDTH, 10)))
     wallList.append(
-        Wall(pygame.Rect(0, gbv.WINHEIGHT-20, gbv.WINWIDTH, 500)))
+        Wall(pygame.Rect(0, gbv.WINHEIGHT-50, gbv.WINWIDTH, 500)))
     wallList.append(
         Wall(pygame.Rect(
-            gbv.STICKPOS[0], gbv.STICKPOS[1], gbv.STICKWIDTH, gbv.STICKHEIGHT),
-            img=True))
+            gbv.STICKPOS[0], gbv.STICKPOS[1], gbv.STICKWIDTH, gbv.STICKHEIGHT), img=True))
     spriteGroup.add(wallList[-1])   # add the stick, need to show
     # spriteGroup.add(wallList)
     musicButton = button.Button(pygame.Rect(gbv.WINWIDTH-200, 20, 60, 60), 1)
