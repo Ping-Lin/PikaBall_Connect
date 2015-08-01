@@ -80,9 +80,9 @@ class Pika(pygame.sprite.Sprite):
         self.gravity = gbv.GRAVITY
         self.pikaHeight = 300
         self.pikaV0 = -25
-        self.constWalkSpeed = 13
+        self.constWalkSpeed = 11
         self.atSpeed = [0, 0]
-        self.constAtSpeed = [40, 30, 35]   #left(right), up and down
+        self.constAtSpeed = [28, 26, 35]   #left(right), up and down
         self.puWidth = 15
 
         # initialize the image and rect
@@ -103,43 +103,49 @@ class Pika(pygame.sprite.Sprite):
         check speed and add the speed to the movement
         """
         self.speed[0] = 0
-        if self.jumpingNow is False:
+        if not self.jumpingNow:
             self.speed[1] = 0
 
         if not self.direct:
             if clickButton['left']:
                 self.speed[0] = -self.constWalkSpeed
-                self.atSpeed[0] = self.constAtSpeed[0]
+                self.atSpeed[0] += self.constAtSpeed[0]
             if clickButton['right']:
                 self.speed[0] = self.constWalkSpeed
-                self.atSpeed[0] = self.constAtSpeed[0]
+                self.atSpeed[0] += self.constAtSpeed[0]
             if clickButton['up']:
                 self.jump = True
-                self.atSpeed[1] = -self.constAtSpeed[1]
-                self.atSpeed[0] = self.constAtSpeed[0]/2
+                self.atSpeed[1] += -self.constAtSpeed[1]
+                self.atSpeed[0] += self.constAtSpeed[0]/2
             if clickButton['down']:
-                self.atSpeed[1] = self.constAtSpeed[2]
+                self.atSpeed[1] += self.constAtSpeed[2]
+                self.atSpeed[0] += self.constAtSpeed[0]/2
             if clickButton['space']:
-                self.attack = self.pu = True
+                self.attack = True
+                if clickButton['left'] or clickButton['right']:
+                    self.pu = True
                 if self.atSpeed[0] == 0 and self.atSpeed[1] == 0:
-                    self.atSpeed[0] = self.constAtSpeed[0]/2
+                    self.atSpeed[0] += self.constAtSpeed[0]*0.8
         else:
             if clickButton['a']:
                 self.speed[0] = -self.constWalkSpeed
-                self.atSpeed[0] = self.constAtSpeed[0]
+                self.atSpeed[0] += self.constAtSpeed[0]
             if clickButton['d']:
                 self.speed[0] = self.constWalkSpeed
-                self.atSpeed[0] = self.constAtSpeed[0]
+                self.atSpeed[0] += self.constAtSpeed[0]
             if clickButton['w']:
                 self.jump = True
-                self.atSpeed[1] = -self.constAtSpeed[1]
-                self.atSpeed[0] = self.constAtSpeed[0]/2
+                self.atSpeed[1] += -self.constAtSpeed[1]
+                self.atSpeed[0] += self.constAtSpeed[0]/2
             if clickButton['s']:
-                self.atSpeed[1] = self.constAtSpeed[2]
+                self.atSpeed[1] += self.constAtSpeed[2]
+                self.atSpeed[0] += self.constAtSpeed[0]/2
             if clickButton['lshift']:
-                self.attack = self.pu = True
+                self.attack = True
+                if clickButton['a'] or clickButton['d']:
+                    self.pu = True
                 if self.atSpeed[0] == 0 and self.atSpeed[1] == 0:
-                    self.atSpeed[0] = self.constAtSpeed[0]/2
+                    self.atSpeed[0] += self.constAtSpeed[0]*0.8
 
         # jumping or not
         if self.jump and not self.jumpingNow and not self.puingNow:
@@ -189,21 +195,20 @@ class Pika(pygame.sprite.Sprite):
         # attacking or not
         if self.attackingNow:
             self.indexAt += 1
-            index = self.indexAt / 5
+            index = self.indexAt / 7
             if index == 4:
                 self.attackingNow = False
                 self.atLevel = 0
-                self.atSpeed = [0, 0]
             # set attack level, but now don't use
             newIndex = 0
             if index == 0:
-                self.atLevelId += 1
-                if self.atLevelId >= 10:
-                    self.atLevelId = 0
-                if self.atLevelId >= 5:
-                    newIndex = 1
-                else:
-                    newIndex = 0
+                # self.atLevelId += 1
+                # if self.atLevelId >= 10:
+                #    self.atLevelId = 0
+                # if self.atLevelId >= 5:
+                #     newIndex = 1
+                # else:
+                newIndex = 0
             else:
                 self.sound[1].play()
                 newIndex = index
@@ -214,10 +219,18 @@ class Pika(pygame.sprite.Sprite):
 
         # check for collision
         tmpRect = self.rect.move(self.speed[0], self.speed[1])
-        if checkCollision(tmpRect, wallList):
-            self.rect = self.rect.move(0, self.speed[1])
-        else:
+        collidIndex = checkCollision(tmpRect, wallList)
+        if collidIndex == -1 or collidIndex == 2:
+            # check if pika is on the sky
+            tmpRect2 = self.rect.move(0, 100)
+            if not self.jumpingNow and checkCollision(tmpRect2, wallList) == -1:
+                self.jumpingNow = True
             self.rect = tmpRect
+        elif collidIndex == 4 and tmpRect.bottom <= gbv.STICKPOS[1]+5 and tmpRect.bottom >= gbv.STICKPOS[1]:
+            self.rect = self.rect.move(0, 0)
+            self.jumpingNow = False
+        else:
+            self.rect = self.rect.move(0, self.speed[1])
 
     def moveOrigin(self):
         self.rect = pygame.Rect(self.originPos[0], self.originPos[1],
@@ -257,7 +270,8 @@ def loadImg(path, reverse, width, height):
 
 
 def checkCollision(tmpRect, wallList):
-    if tmpRect.collidelist(wallList) == -1:
-        return False
+    index = tmpRect.collidelist(wallList)
+    if index == -1:
+        return -1
     else:
-        return True
+        return index

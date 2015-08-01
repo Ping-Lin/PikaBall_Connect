@@ -25,6 +25,7 @@ class PikaBall(pygame.sprite.Sprite):
         self.historyPos = [None]*3
         self.historyPosIndex = 0
         self.historyPosIndexDelay = 0   #how many frame need to record one time
+        self.ifAttack = False
 
         # speed and rotate degree
         self.speed = [0, 0]
@@ -132,13 +133,15 @@ class PikaBall(pygame.sprite.Sprite):
             if dist <= 100:
                 horizon = (pikaList[pika].rect.centerx-tmpRect.centerx)*(-0.1)
                 if pikaList[pika].direct:
-                    horizon += 5*random.randrange(7, 11, 1)*0.1
+                    horizon += 8*random.randrange(5, 11, 1)*0.1
                 else:
-                    horizon -= 5
+                    horizon -= 8*random.randrange(5, 11, 1)*0.1
 
+                self.ifAttack = False
                 # check if pika is attack or jump or not
                 if pikaList[pika].attackingNow:
                     # atSpeed = [speed*pikaList[pika].atLevel for speed in pikaList[pika].atSpeed]
+                    self.ifAttack = True
                     if pikaList[pika].direct:
                         return pikaList[pika].atSpeed
                     else:

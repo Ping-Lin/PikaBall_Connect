@@ -91,7 +91,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
         pikaBall.update(clickButton, wallList, pikaList)
         spriteGroup.draw(DISPLAYSURF)
         buttonGroup.draw(DISPLAYSURF)
-        pikaBall.drawHistory(DISPLAYSURF)
+        if pikaBall.ifAttack:
+            pikaBall.drawHistory(DISPLAYSURF)
         pikaBall.draw(DISPLAYSURF)
 
         # check if score
@@ -188,6 +189,7 @@ def setScore(txtImgs, wallList):
 
 def setNewGame(pikaList, pikaBall, wallList):
     global NEWGAME, ALPHA, STARTDELAY
+    pikaBall.ifAttack = False
     ALPHA += 10
     background = pygame.Surface(DISPLAYSURF.get_size())
     background.set_alpha(ALPHA)
