@@ -40,6 +40,7 @@ class PikaBall(pygame.sprite.Sprite):
                                 self.width, self.height)
 
         # add hit picture
+        self.ifHitIndex = 0
         self.ifHitPic = False
         self.hitPos = [0, 0]
         self.imageHitPic = loadImg('ball/pa.png', 100, 100)
@@ -76,7 +77,12 @@ class PikaBall(pygame.sprite.Sprite):
                 self.moveOrigin(random.randint(0, 1))
 
     def update(self, clickButton, wallList, pikaList, pos=""):
-        self.ifHitPic = False
+        if self.ifHitPic:
+            self.ifHitIndex += 1
+            if self.ifHitIndex % 5 == 0:
+                self.ifHitPic = False
+                self.ifHitIndex = 0
+
         self.checkMovement(clickButton, wallList, pikaList, pos)
         self.checkPlace()
         self.historyPos[self.historyPosIndex] = (self.rect.x, self.rect.y)
