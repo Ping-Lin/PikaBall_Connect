@@ -39,6 +39,11 @@ class PikaBall(pygame.sprite.Sprite):
         self.rect = pygame.Rect(gbv.MARGINLEFT, gbv.BALLHEIGHT,
                                 self.width, self.height)
 
+        # add hit picture
+        self.ifHitPic = False
+        self.hitPos = [0, 0]
+        self.imageHitPic = loadImg('ball/pa.png', 100, 100)
+
     def checkMovement(self, clickButton, wallList, pikaList, pos=""):
         """
         check speed and change the speed when collision
@@ -71,6 +76,7 @@ class PikaBall(pygame.sprite.Sprite):
                 self.moveOrigin(random.randint(0, 1))
 
     def update(self, clickButton, wallList, pikaList, pos=""):
+        self.ifHitPic = False
         self.checkMovement(clickButton, wallList, pikaList, pos)
         self.checkPlace()
         self.historyPos[self.historyPosIndex] = (self.rect.x, self.rect.y)
@@ -90,6 +96,10 @@ class PikaBall(pygame.sprite.Sprite):
                 tmpRect = pygame.Rect(hist[0], hist[1], self.width, self.height)
                 DISPLAYSURF.blit(addAlpha(self.imageHist, 100), tmpRect)
 
+    def drawHitPic(self, DISPLAYSURF):
+        tmpRect = pygame.Rect(self.hitPos[0], self.hitPos[1], 100, 100)
+        DISPLAYSURF.blit(self.imageHitPic, tmpRect)
+
     def checkCollision(self, tmpRect, wallList, pikaList, ballSpeed):
         wall = tmpRect.collidelist(wallList)
         pika = tmpRect.collidelist(pikaList)
@@ -107,6 +117,10 @@ class PikaBall(pygame.sprite.Sprite):
         elif wall == 2 or tmpRect.top <= 0:   # up
             return [ballSpeed[0], abs(ballSpeed[1])]
         elif wall == 3 or tmpRect.bottom >= gbv.WINHEIGHT:   # down
+            # set up the hit pic position
+            self.ifHitPic = True
+            self.hitPos = tmpRect.topleft
+
             if tmpRect.centerx < gbv.STICKPOS[0]:
                 wallList[wall].ifScore = [False, True]
             else:
@@ -140,6 +154,10 @@ class PikaBall(pygame.sprite.Sprite):
                 self.ifAttack = False
                 # check if pika is attack or jump or not
                 if pikaList[pika].attackingNow:
+                    # set up the hit pic position
+                    self.ifHitPic = True
+                    self.hitPos = tmpRect.midleft
+
                     # atSpeed = [speed*pikaList[pika].atLevel for speed in pikaList[pika].atSpeed]
                     self.ifAttack = True
                     if pikaList[pika].direct:

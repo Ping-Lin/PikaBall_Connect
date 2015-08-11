@@ -85,7 +85,6 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
                 buttonGroup.update(clickPos, pikaList, wallList)
 
         # draw the image
-
         DISPLAYSURF.blit(background, (0, 0))
         spriteGroup.update(clickButton, wallList)
         pikaBall.update(clickButton, wallList, pikaList)
@@ -94,6 +93,8 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
         if pikaBall.ifAttack:
             pikaBall.drawHistory(DISPLAYSURF)
         pikaBall.draw(DISPLAYSURF)
+        if pikaBall.ifHitPic:
+            pikaBall.drawHitPic(DISPLAYSURF)
 
         # check if score
         if wallList[3].ifScore[0] or wallList[3].ifScore[1]:
@@ -121,7 +122,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
                 STARTDELAY = 1000
                 pygame.mixer.music.unpause()
 
-        print CLOCK.get_fps()
+        # print CLOCK.get_fps()
         CLOCK.tick(40)
 
 
