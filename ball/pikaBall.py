@@ -45,6 +45,9 @@ class PikaBall(pygame.sprite.Sprite):
         self.hitPos = [0, 0]
         self.imageHitPic = loadImg('ball/pa.png', 100, 100)
 
+        # add ball picture
+        self.imageShadowPic = loadImg('ball/shadow.bmp', 200, 100)
+
     def checkMovement(self, clickButton, wallList, pikaList, pos=""):
         """
         check speed and change the speed when collision
@@ -105,6 +108,13 @@ class PikaBall(pygame.sprite.Sprite):
     def drawHitPic(self, DISPLAYSURF):
         tmpRect = pygame.Rect(self.hitPos[0], self.hitPos[1], 100, 100)
         DISPLAYSURF.blit(self.imageHitPic, tmpRect)
+
+    def drawShadow(self, DISPLAYSURF):
+        shadowSize = int(50 + 40 * (1 - self.rect.y * 1.0 / gbv.WINHEIGHT))
+        alpha = int(1 - 1 * (self.rect.y * 1.0 / gbv.WINHEIGHT))
+        self.imageShadowPic.set_masks((150, 150, 150, alpha))
+        DISPLAYSURF.blit(pygame.transform.scale(self.imageShadowPic,
+                         (shadowSize, shadowSize/2)), (self.rect.left, gbv.WINHEIGHT - 70))
 
     def checkCollision(self, tmpRect, wallList, pikaList, ballSpeed):
         wall = tmpRect.collidelist(wallList)

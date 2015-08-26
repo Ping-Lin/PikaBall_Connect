@@ -86,6 +86,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
 
         # draw the image
         DISPLAYSURF.blit(background, (0, 0))
+        pikaBall.drawShadow(DISPLAYSURF)
         spriteGroup.update(clickButton, wallList)
         pikaBall.update(clickButton, wallList, pikaList)
         spriteGroup.draw(DISPLAYSURF)
