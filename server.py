@@ -20,9 +20,9 @@ import select
 import time
 
 class GameServer(object):
-    def __init__(self, addr = "127.0.0.1", port = 9876):
+    def __init__(self, port = 9876):
         self.connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.connect.bind(("127.0.0.1", port))
+        self.connect.bind(('0.0.0.0', port))
         self.clientAddr = None
 
         self.readList = [self.connect]
@@ -44,6 +44,7 @@ class GameServer(object):
             background = pygame.image.load('bg.jpg').convert()
             background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
             pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP, MOUSEBUTTONUP])   # improve the FPS
+            txtImgs[2] = FONT.render("waiting...", 1, (255, 0, 0))
             while True:
                 clickList[0:] = ['0']*5
                 sendList[0:] = ['0']*12
@@ -155,6 +156,9 @@ class GameServer(object):
                         buttonGroup.update(clickPos, pikaList, wallList)
 
                 if not self.start:
+                    if not self.clientAddr:
+                        DISPLAYSURF.blit(txtImgs[2], (gbv.WINWIDTH/2, gbv.WINHEIGHT/2))
+                        pygame.display.update()
                     continue
 
                 # update the image
@@ -258,7 +262,7 @@ class GameServer(object):
         clickButton = dict.fromkeys(
             ['left', 'right', 'up', 'down', 'space',
             'a', 'd', 'w', 's', 'lshift'])
-        txtImgs = [FONT.render("0", 1, (255, 0, 0))]*2
+        txtImgs = [FONT.render("0", 1, (255, 0, 0))]*3
         NEWGAME = False
         ALPHA = 0
         STARTDELAY = 0
@@ -302,6 +306,9 @@ class GameServer(object):
         DISPLAYSURF.blit(background, (0, 0))
         pygame.time.delay(30)
 
-if __name__ == '__main__':
+def main():
     player = GameServer()
     player.run()
+
+if __name__ == '__main__':
+    main()

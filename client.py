@@ -20,12 +20,10 @@ import select
 import time
 
 class GameClient(object):
-    def __init__(self, port = 9999):
+    def __init__(self, addr = "127.0.0.1"):
         self.serverPort = 9876
         self.connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.connect.bind(("127.0.0.1", port))
-        self.addr = "127.0.0.1"   #server addr
-        self.port = port
+        self.addr = addr   #server addr
         self.start = False
         self.starting = False
 
@@ -304,6 +302,9 @@ class GameClient(object):
         DISPLAYSURF.blit(background, (0, 0))
         pygame.time.delay(30)
 
-if __name__ == '__main__':
+def main():
     player = GameClient()
     player.run()
+
+if __name__ == '__main__':
+    main()
