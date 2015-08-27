@@ -35,15 +35,18 @@ class GameServer(object):
         """
         Run the main loop of game
         """
-        print "waiting......"
+        print("waiting......")
         try:
             clickList = ['0']*5   # receive click list
-            sendList = ['0']*5   #send click list
+            sendList = ['0']*12   #send click list
             msg = ""   #send msg
             global NEWGAME, STARTDELAY
+            background = pygame.image.load('bg.jpg').convert()
+            background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
+            pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP, MOUSEBUTTONUP])   # improve the FPS
             while True:
-                clickList = ['0']*5
-                sendList = ['0']*12
+                clickList[0:] = ['0']*5
+                sendList[0:] = ['0']*12
                 # receive the connect data
                 readable, writable, exceptional = (
                     select.select(self.readList, self.writeList, [], 0)
@@ -63,10 +66,10 @@ class GameServer(object):
                                 print "Good Bye..."
                                 exit(1)
                             elif msg[0] == 's':
-								if self.start:
-									self.starting = True 
-								else:
-									self.start = True
+                                if self.start:
+                                    self.starting = True
+                                else:
+                                    self.start = True
                         else:
                             print "Unexpected: {0}".format(msg)
 
@@ -108,7 +111,15 @@ class GameServer(object):
                         pygame.quit()
                         sys.exit()
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_LEFT:
+                        if event.key == pygame.K_F1:
+                            pygame.quit()
+                            sys.exit()
+                        elif event.key == pygame.K_F2:
+                            if DISPLAYSURF.get_flags() & FULLSCREEN:
+                                pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), DOUBLEBUF, 0)
+                            else:
+                                pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), FLAGS, 0)
+                        elif event.key == pygame.K_LEFT:
                             clickButton['left'] = True
                             sendList[0] = '1'
                         elif event.key == pygame.K_RIGHT:
@@ -147,7 +158,8 @@ class GameServer(object):
                     continue
 
                 # update the image
-                DISPLAYSURF.fill(gbv.BGCOLOR)
+                DISPLAYSURF.blit(background, (0, 0))
+                pikaBall.drawShadow(DISPLAYSURF)
                 spriteGroup.update(clickButton, wallList)
                 pikaBall.update(clickButton, wallList, pikaList)
 
@@ -163,7 +175,11 @@ class GameServer(object):
                 # draw the image
                 spriteGroup.draw(DISPLAYSURF)
                 buttonGroup.draw(DISPLAYSURF)
+                if pikaBall.ifAttack:
+                    pikaBall.drawHistory(DISPLAYSURF)
                 pikaBall.draw(DISPLAYSURF)
+                if pikaBall.ifHitPic:
+                    pikaBall.drawHitPic(DISPLAYSURF)
 
                 # check if score
                 if wallList[3].ifScore[0] or wallList[3].ifScore[1]:
@@ -178,6 +194,8 @@ class GameServer(object):
                 # check if new game
                 if NEWGAME:
                     self.setNewGame(pikaList, pikaBall, wallList)
+                else:
+                    DISPLAYSURF.set_alpha(None)   # improve the FPS
 
                 pygame.display.update()
                 # a new game start need to delay a time
@@ -193,17 +211,20 @@ class GameServer(object):
                         STARTDELAY = 1000
                         pygame.mixer.music.unpause()
 
-                CLOCK.tick(20)
+                CLOCK.tick(40)
         finally:
             self.connect.sendto('d', self.clientAddr)
 
     def run(self):
-        global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY
+        global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY, FLAGS
         pygame.init()
-        DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT))
+        FLAGS = FULLSCREEN | DOUBLEBUF
+        DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), FLAGS, 0)
+        DISPLAYSURF.set_alpha(None)
         pygame.display.set_caption('PikaBall X Connect Server')
         CLOCK = pygame.time.Clock()
         FONT = pygame.font.Font(None, 100)
+        FONT.set_italic(True)
         pygame.mixer.music.load('bg.wav')
 
         # Load the element
@@ -220,7 +241,7 @@ class GameServer(object):
         wallList.append(
             Wall(pygame.Rect(0, 0, gbv.WINWIDTH, 10)))
         wallList.append(
-            Wall(pygame.Rect(0, gbv.WINHEIGHT, gbv.WINWIDTH, 500)))
+            Wall(pygame.Rect(0, gbv.WINHEIGHT-50, gbv.WINWIDTH, 500)))
         wallList.append(
             Wall(pygame.Rect(
                 gbv.STICKPOS[0], gbv.STICKPOS[1], gbv.STICKWIDTH, gbv.STICKHEIGHT),
@@ -258,6 +279,7 @@ class GameServer(object):
 
     def setNewGame(self, pikaList, pikaBall, wallList):
         global NEWGAME, ALPHA, STARTDELAY
+        pikaBall.ifAttack = False
         ALPHA += 10
         background = pygame.Surface(DISPLAYSURF.get_size())
         background.set_alpha(ALPHA)
