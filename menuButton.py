@@ -47,7 +47,7 @@ class MenuButton(pygame.sprite.Sprite):
                 ifCorrect = checkAddressFormat(serverAddr)
                 if ifCorrect:
                     pygame.quit()
-                    client.main()
+                    client.main(serverAddr)
                 else:
                     page[0] = -1
 

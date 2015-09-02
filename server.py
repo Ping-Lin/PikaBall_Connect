@@ -222,6 +222,7 @@ class GameServer(object):
     def run(self):
         global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY, FLAGS
         pygame.init()
+        pygame.display.set_icon(pygame.image.load('icon.icns'))
         FLAGS = FULLSCREEN | DOUBLEBUF
         DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), FLAGS, 0)
         DISPLAYSURF.set_alpha(None)

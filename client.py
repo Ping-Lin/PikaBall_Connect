@@ -218,6 +218,7 @@ class GameClient(object):
     def run(self):
         global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY, FLAGS
         pygame.init()
+        pygame.display.set_icon(pygame.image.load('icon.icns'))
         FLAGS = FULLSCREEN | DOUBLEBUF
         DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), FLAGS, 0)
         DISPLAYSURF.set_alpha(None)
@@ -302,8 +303,9 @@ class GameClient(object):
         DISPLAYSURF.blit(background, (0, 0))
         pygame.time.delay(30)
 
-def main():
-    player = GameClient()
+def main(addr):
+    print addr
+    player = GameClient(addr)
     player.run()
 
 if __name__ == '__main__':

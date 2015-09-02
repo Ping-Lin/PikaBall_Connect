@@ -7,7 +7,6 @@ Description: show the main game screen and the game process
 """
 
 import pygame
-import pygame.freetype
 import sys
 from pygame.locals import *
 import gbv
@@ -130,6 +129,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
 def main():
     global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY, FLAGS
     pygame.init()
+    pygame.display.set_icon(pygame.image.load('icon.icns'))
     FLAGS = FULLSCREEN | DOUBLEBUF
     DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT), FLAGS, 0)
     DISPLAYSURF.set_alpha(None)

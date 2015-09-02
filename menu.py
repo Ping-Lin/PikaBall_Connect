@@ -62,6 +62,7 @@ def runGame(buttonGroup, txtImgs, txtbox):
 def main():
     global DISPLAYSURF, CLOCK
     pygame.init()
+    pygame.display.set_icon(pygame.image.load('icon.icns'))
     DISPLAYSURF = pygame.display.set_mode((gbv.WINWIDTH, gbv.WINHEIGHT))
     pygame.display.set_caption('PikaBall X Connect')
     CLOCK = pygame.time.Clock()
