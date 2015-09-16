@@ -71,6 +71,7 @@ class GameClient(object):
                                     self.start = True
                         else:
                             print "Unexpect: {0}".format(msg)
+                            exit(1)
 
                 # received data using
                 if clickList[0] == '1':
@@ -303,8 +304,7 @@ class GameClient(object):
         DISPLAYSURF.blit(background, (0, 0))
         pygame.time.delay(30)
 
-def main(addr):
-    print addr
+def main(addr='127.0.0.1'):
     player = GameClient(addr)
     player.run()
 

@@ -73,6 +73,7 @@ class GameServer(object):
                                     self.start = True
                         else:
                             print "Unexpected: {0}".format(msg)
+                            exit(1)
 
                 if clickList[0] == '1':
                     clickButton['a'] = True
