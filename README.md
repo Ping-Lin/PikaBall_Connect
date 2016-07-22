@@ -19,5 +19,10 @@
 
 執行方式: ``` python menu.py ```
 
+## 操作方式
+左邊玩家： wsad left-shift  
+右邊玩家： 上下左右 space  
+
+
 ## License
 MIT License
