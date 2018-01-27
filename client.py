@@ -60,7 +60,7 @@ class GameClient(object):
                                 clickList = [x.strip() for x in msg.split(',')]
                         elif len(msg) == 1:
                             if msg[0] == 'd':
-                                print "Good Bye..."
+                                print("Good Bye...")
                                 exit(1)
                             elif msg[0] == 'c':
                                 self.start = True
@@ -70,7 +70,7 @@ class GameClient(object):
                                 else:
                                     self.start = True
                         else:
-                            print "Unexpect: {0}".format(msg)
+                            print("Unexpect: {0}".format(msg))
                             exit(1)
 
                 # received data using

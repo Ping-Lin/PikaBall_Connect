@@ -23,13 +23,13 @@ class Pika(pygame.sprite.Sprite):
 
         # Load the pika image: walk, pu, jump
         self.pikaImgs = []
-        for i in xrange(1, 6):
+        for i in range(1, 6):
             path = 'character/pikaToRight' + str(i) + '.bmp'
             self.pikaImgs.append(
                 loadImg(path, reverse, self.width, self.height))
 
         self.puImgs = [None]*10
-        for i in xrange(1, 11):
+        for i in range(1, 11):
             j = i-5 if i > 5 else i
             j = 3 if j >= 4 else j
             path = 'character/pikaPu' + str(j) + '.bmp'
@@ -39,7 +39,7 @@ class Pika(pygame.sprite.Sprite):
                 self.puImgs[i-1] = loadImg(path, True, self.width, self.height)
 
         self.atImgs = [None]*10
-        for i in xrange(1, 11):
+        for i in range(1, 11):
             j = i-5 if i > 5 else i
             path = 'character/pikaAt' + str(j) + '.bmp'
             if i <= 5:
@@ -48,7 +48,7 @@ class Pika(pygame.sprite.Sprite):
                 self.atImgs[i-1] = loadImg(path, True, self.width, self.height)
 
         self.jpImgs = [None]*10
-        for i in xrange(1, 11):
+        for i in range(1, 11):
             j = i-5 if i > 5 else i
             path = 'character/jump' + str(j) + '.bmp'
             if i <= 5:
@@ -157,7 +157,7 @@ class Pika(pygame.sprite.Sprite):
             self.indexjp += 1
             if self.indexjp > 5:
                 self.indexjp = 0
-            index = self.indexjp / 2
+            index = self.indexjp // 2
             if self.direct:
                 self.image = self.jpImgs[index]
             else:
@@ -182,7 +182,7 @@ class Pika(pygame.sprite.Sprite):
             self.sound[0].play()
         if self.puingNow:
             self.indexPu += 1
-            index = self.indexPu / 7
+            index = self.indexPu // 7
             if index == 4:
                 self.puingNow = 0
             if self.puingNow == 1:
@@ -195,7 +195,7 @@ class Pika(pygame.sprite.Sprite):
         # attacking or not
         if self.attackingNow:
             self.indexAt += 1
-            index = self.indexAt / 7
+            index = self.indexAt // 7
             if index == 4:
                 self.attackingNow = False
                 self.atLevel = 0
@@ -248,7 +248,7 @@ class Pika(pygame.sprite.Sprite):
         self.atSpeed = [0, 0]
 
         self.index += 1
-        index = self.index/5
+        index = self.index//5
         if index >= len(self.pikaImgs):
             self.index = 0
             index = 0

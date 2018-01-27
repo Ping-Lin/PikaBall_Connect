@@ -113,8 +113,13 @@ class PikaBall(pygame.sprite.Sprite):
         shadowSize = int(50 + 40 * (1 - self.rect.y * 1.0 / gbv.WINHEIGHT))
         alpha = int(1 - 1 * (self.rect.y * 1.0 / gbv.WINHEIGHT))
         self.imageShadowPic.set_masks((150, 150, 150, alpha))
-        DISPLAYSURF.blit(pygame.transform.scale(self.imageShadowPic,
-                         (shadowSize, shadowSize/2)), (self.rect.left, gbv.WINHEIGHT - 70))
+        DISPLAYSURF.blit(
+            pygame.transform.scale(
+                self.imageShadowPic,
+                (shadowSize, int(shadowSize/2))
+            ),
+            (self.rect.left, gbv.WINHEIGHT - 70)
+        )
 
     def checkCollision(self, tmpRect, wallList, pikaList, ballSpeed):
         wall = tmpRect.collidelist(wallList)

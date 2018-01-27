@@ -64,7 +64,7 @@ class GameServer(object):
                                 self.start = True
                                 self.connect.sendto('c', self.clientAddr)
                             elif msg[0] == 'd':
-                                print "Good Bye..."
+                                print("Good Bye...")
                                 exit(1)
                             elif msg[0] == 's':
                                 if self.start:
@@ -72,7 +72,7 @@ class GameServer(object):
                                 else:
                                     self.start = True
                         else:
-                            print "Unexpected: {0}".format(msg)
+                            print("Unexpected: {0}".format(msg))
                             exit(1)
 
                 if clickList[0] == '1':
