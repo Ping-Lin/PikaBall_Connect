@@ -43,7 +43,7 @@ class GameClient(object):
             sendList = ['0']*5   # send click list
             msg = ""   # send msg
             global NEWGAME, STARTDELAY
-            background = pygame.image.load('bg.jpg').convert()
+            background = pygame.image.load('images/bg.jpg').convert()
             background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
             pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP, MOUSEBUTTONUP])   # improve the FPS
             while True:
