@@ -6,13 +6,16 @@ Github: Ping-Lin
 Description: menu let user to select which mode want to play
 """
 
+import sys
+
 import pygame
 import pygame.freetype
-import sys
 from pygame.locals import *
+
 import gbv
 from menuButton import MenuButton
 import eztext
+
 
 def runGame(buttonGroup, txtImgs, txtbox):
     page = [1]
@@ -89,9 +92,10 @@ def main():
     txtImgs.append(FONT.render('Server IP', 1, (255, 204, 34)))
     txtImgs.append(FONT.render('Error!', 1, (244, 102, 220)))
 
-    txtbox = eztext.Input(x = 270, y = 450, maxlength = 15, color=(244, 240, 102), prompt='', font=FONT)
+    txtbox = eztext.Input(x=270, y=450, maxlength=15, color=(244, 240, 102), prompt='', font=FONT)
 
     runGame(buttonGroup, txtImgs, txtbox)
+
 
 if __name__ == '__main__':
     main()

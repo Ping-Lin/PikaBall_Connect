@@ -5,9 +5,12 @@ Email: billy3962@hotmail.com
 Github: Ping-Lin
 Description: pika.py store the information of the pika character
 """
+
 import pygame
 from pygame.locals import *
+
 import gbv
+
 
 class Pika(pygame.sprite.Sprite):
     def __init__(self, reverse=False):

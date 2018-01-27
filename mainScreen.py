@@ -6,14 +6,16 @@ Github: Ping-Lin
 Description: show the main game screen and the game process
 """
 
-import pygame
 import sys
+
+import pygame
 from pygame.locals import *
 import gbv
+import button
 from character.pika import Pika
 from obstacle.wall import Wall
 from ball.pikaBall import PikaBall
-import button
+
 
 def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
             buttonGroup):
@@ -212,6 +214,7 @@ def setNewGame(pikaList, pikaBall, wallList):
 
     DISPLAYSURF.blit(background, (0, 0))
     pygame.time.delay(30)
+
 
 if __name__ == '__main__':
     main()

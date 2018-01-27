@@ -6,18 +6,20 @@ Github: Ping-Lin
 Description: show the main game screen and the game process
 """
 
-import pygame
-import pygame.freetype
 import sys
-from pygame.locals import *
-import gbv
-from character.pika import Pika
-from obstacle.wall import Wall
-from ball.pikaBall import PikaBall
-import button
 import socket
 import select
-import time
+
+import pygame
+import pygame.freetype
+from pygame.locals import *
+
+import gbv
+import button
+from ball.pikaBall import PikaBall
+from character.pika import Pika
+from obstacle.wall import Wall
+
 
 class GameClient(object):
     def __init__(self, addr = "127.0.0.1"):
@@ -30,8 +32,7 @@ class GameClient(object):
         self.readList = [self.connect]
         self.writeList = []
 
-    def runGame(self, spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
-                buttonGroup):
+    def runGame(self, spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs, buttonGroup):
         """
         Run the main loop of game
         """
@@ -39,8 +40,8 @@ class GameClient(object):
             # Initialize connect to server
             self.connect.sendto('c', (self.addr, self.serverPort))
             clickList = ['0']*12   # receive click list
-            sendList = ['0']*5   #send click list
-            msg = ""   #send msg
+            sendList = ['0']*5   # send click list
+            msg = ""   # send msg
             global NEWGAME, STARTDELAY
             background = pygame.image.load('bg.jpg').convert()
             background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
@@ -49,7 +50,7 @@ class GameClient(object):
                 clickList[0:10] = ['0']*10
                 sendList[0:] = ['0']*5
                 # receive the connect data
-                readable, writable, exceptional = (
+                readable, _, exceptional = (
                     select.select(self.readList, self.writeList, [], 0)
                 )
                 for f in readable:
@@ -115,7 +116,6 @@ class GameClient(object):
                     clickButton['s'] = False
                 if clickList[9] == '2':
                     clickButton['lshift'] = False
-
 
                 for event in pygame.event.get():
                     if event.type == QUIT:
@@ -268,7 +268,6 @@ class GameClient(object):
         self.runGame(spriteGroup, wallList, pikaList, PikaBall(),
                 clickButton, txtImgs, buttonGroup)
 
-
     def setScore(self, txtImgs, wallList):
         if wallList[3].ifScore[0]:
             SCORETXT[0] += 1
@@ -277,7 +276,6 @@ class GameClient(object):
         txtImgs[0] = FONT.render(str(SCORETXT[0]), 1, (255, 0, 0))
         txtImgs[1] = FONT.render(str(SCORETXT[1]), 1, (255, 0, 0))
         return txtImgs
-
 
     def setNewGame(self, pikaList, pikaBall, wallList):
         global NEWGAME, ALPHA, STARTDELAY
@@ -304,9 +302,11 @@ class GameClient(object):
         DISPLAYSURF.blit(background, (0, 0))
         pygame.time.delay(30)
 
+
 def main(addr='127.0.0.1'):
     player = GameClient(addr)
     player.run()
+
 
 if __name__ == '__main__':
     main()

@@ -7,12 +7,13 @@ Description: the button for user to click
 like 1p vs 1p or connected 1p vs 1p
 """
 
+import re
+
 import pygame
-import sys
+
 import mainScreen
 import server
 import client
-import re
 
 
 class MenuButton(pygame.sprite.Sprite):

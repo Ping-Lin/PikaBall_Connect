@@ -1,33 +1,47 @@
 # input lib
-from pygame.locals import *
-import pygame, string
 
-class ConfigError(KeyError): pass
+from pygame.locals import *
+
+
+class ConfigError(KeyError):
+    pass
+
 
 class Config:
     """ A utility for configuration """
     def __init__(self, options, *look_for):
         assertions = []
         for key in look_for:
-            if key[0] in options.keys(): exec('self.'+key[0]+' = options[\''+key[0]+'\']')
-            else: exec('self.'+key[0]+' = '+key[1])
+            if key[0] in options.keys():
+                exec('self.'+key[0]+' = options[\''+key[0]+'\']')
+            else:
+                exec('self.'+key[0]+' = '+key[1])
             assertions.append(key[0])
         for key in options.keys():
-            if key not in assertions: raise ConfigError(key+' not expected as option')
+            if key not in assertions:
+                raise ConfigError(key+' not expected as option')
+
 
 class Input:
     """ A text input for pygame apps """
     def __init__(self, **options):
         """ Options: x, y, font, color, restricted, maxlength, prompt """
-        self.options = Config(options, ['x', '0'], ['y', '0'], ['font', 'pygame.font.Font(None, 32)'],
-                              ['color', '(0,0,0)'], ['restricted', '\'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!"#$%&\\\'()*+,-./:;<=>?@[\]^_`{|}~\''],
-                              ['maxlength', '-1'], ['prompt', '\'\''])
-        self.x = self.options.x; self.y = self.options.y
+        self.options = Config(
+            options,
+            ['x', '0'], ['y', '0'],
+            ['font', 'pygame.font.Font(None, 32)'],
+            ['color', '(0,0,0)'],
+            ['restricted', '\'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!"#$%&\\\'()*+,-./:;<=>?@[\]^_`{|}~\''],
+            ['maxlength', '-1'], ['prompt', '\'\'']
+        )
+        self.x = self.options.x
+        self.y = self.options.y
         self.font = self.options.font
         self.color = self.options.color
         self.restricted = self.options.restricted
         self.maxlength = self.options.maxlength
-        self.prompt = self.options.prompt; self.value = ''
+        self.prompt = self.options.prompt
+        self.value = ''
         self.shifted = False
 
     def set_pos(self, x, y):
@@ -150,4 +164,5 @@ class Input:
                     elif event.key == K_PERIOD and '>' in self.restricted: self.value += '>'
                     elif event.key == K_SLASH and '?' in self.restricted: self.value += '?'
 
-        if len(self.value) > self.maxlength and self.maxlength >= 0: self.value = self.value[:-1]
+        if len(self.value) > self.maxlength and self.maxlength >= 0:
+            self.value = self.value[:-1]
