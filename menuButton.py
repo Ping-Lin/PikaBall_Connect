@@ -22,7 +22,7 @@ class MenuButton(pygame.sprite.Sprite):
         self.rect = rect
         self.option = option
         self.images = []
-        self.imageName = 'option' + str(option) + '.bmp'
+        self.imageName = 'images/option' + str(option) + '.bmp'
         self.image = loadImg(self.imageName, rect.w, rect.h)
 
     def update(self, clickPos, page, serverAddr=""):
