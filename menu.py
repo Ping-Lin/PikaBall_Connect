@@ -6,13 +6,16 @@ Github: Ping-Lin
 Description: menu let user to select which mode want to play
 """
 
+import sys
+
 import pygame
 import pygame.freetype
-import sys
 from pygame.locals import *
+
 import gbv
 from menuButton import MenuButton
 import eztext
+
 
 def runGame(buttonGroup, txtImgs, txtbox):
     page = [1]
@@ -53,7 +56,6 @@ def runGame(buttonGroup, txtImgs, txtbox):
             else:
                 errorFlag = 0
 
-
         DISPLAYSURF.blit(txtImgs[0], (155, 140))
         pygame.display.update()
         CLOCK.tick(20)
@@ -74,11 +76,11 @@ def main():
     buttonGroup.append(pygame.sprite.Group())
 
     # the last argument is the option{i}.bmp, can see from the folder
-    for i in xrange(1, 3):
+    for i in range(1, 3):
         button = MenuButton(pygame.Rect(460, 100+200*i, 300, 150), i)
         buttonGroup[0].add(button)
 
-    for i in xrange(3, 5):
+    for i in range(3, 5):
         button = MenuButton(pygame.Rect(460, 100+200*(i-2), 300, 150), i)
         buttonGroup[1].add(button)
 
@@ -90,9 +92,10 @@ def main():
     txtImgs.append(FONT.render('Server IP', 1, (255, 204, 34)))
     txtImgs.append(FONT.render('Error!', 1, (244, 102, 220)))
 
-    txtbox = eztext.Input(x = 270, y = 450, maxlength = 15, color=(244, 240, 102), prompt='', font=FONT)
+    txtbox = eztext.Input(x=270, y=450, maxlength=15, color=(244, 240, 102), prompt='', font=FONT)
 
     runGame(buttonGroup, txtImgs, txtbox)
+
 
 if __name__ == '__main__':
     main()

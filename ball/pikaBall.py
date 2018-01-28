@@ -6,10 +6,13 @@ Github: Ping-Lin
 Description: ball class, set up the collision and the speed whatever
 """
 
-import pygame
-import gbv
 import random
 import math
+
+import pygame
+
+import gbv
+
 
 class PikaBall(pygame.sprite.Sprite):
     def __init__(self):
@@ -24,7 +27,7 @@ class PikaBall(pygame.sprite.Sprite):
         self.ifStickCollision = False
         self.historyPos = [None]*3
         self.historyPosIndex = 0
-        self.historyPosIndexDelay = 0   #how many frame need to record one time
+        self.historyPosIndexDelay = 0   # how many frame need to record one time
         self.ifAttack = False
 
         # speed and rotate degree
@@ -75,8 +78,8 @@ class PikaBall(pygame.sprite.Sprite):
         """
         check if the ball is out of the window's position
         """
-        if self.rect.x > gbv.WINWIDTH or self.rect.x < -self.width or\
-           self.rect.y < -self.height or self.rect.y > gbv.WINHEIGHT:
+        if (self.rect.x > gbv.WINWIDTH or self.rect.x < -self.width or
+            self.rect.y < -self.height or self.rect.y > gbv.WINHEIGHT):
                 self.moveOrigin(random.randint(0, 1))
 
     def update(self, clickButton, wallList, pikaList, pos=""):
@@ -113,8 +116,13 @@ class PikaBall(pygame.sprite.Sprite):
         shadowSize = int(50 + 40 * (1 - self.rect.y * 1.0 / gbv.WINHEIGHT))
         alpha = int(1 - 1 * (self.rect.y * 1.0 / gbv.WINHEIGHT))
         self.imageShadowPic.set_masks((150, 150, 150, alpha))
-        DISPLAYSURF.blit(pygame.transform.scale(self.imageShadowPic,
-                         (shadowSize, shadowSize/2)), (self.rect.left, gbv.WINHEIGHT - 70))
+        DISPLAYSURF.blit(
+            pygame.transform.scale(
+                self.imageShadowPic,
+                (shadowSize, int(shadowSize/2))
+            ),
+            (self.rect.left, gbv.WINHEIGHT - 70)
+        )
 
     def checkCollision(self, tmpRect, wallList, pikaList, ballSpeed):
         wall = tmpRect.collidelist(wallList)
@@ -212,6 +220,7 @@ def addAlpha(image, alpha):
     newImage = image.convert()
     newImage.set_alpha(alpha)
     return newImage
+
 
 def rotateCenter(image, angle):
     """rotate an image while keeping its center and size"""

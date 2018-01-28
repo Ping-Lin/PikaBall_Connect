@@ -19,11 +19,11 @@ class Button(pygame.sprite.Sprite):
         self.images = []
 
         if option == 1:   # stop the sound
-            self.images.append(loadImg("musicOn.png", rect.w, rect.h))
-            self.images.append(loadImg("musicOff.png", rect.w, rect.h))
+            self.images.append(loadImg("images/musicOn.png", rect.w, rect.h))
+            self.images.append(loadImg("images/musicOff.png", rect.w, rect.h))
         elif option == 2:   # stop the music
-            self.images.append(loadImg("soundOn.png", rect.w, rect.h))
-            self.images.append(loadImg("soundOff.png", rect.w, rect.h))
+            self.images.append(loadImg("images/soundOn.png", rect.w, rect.h))
+            self.images.append(loadImg("images/soundOff.png", rect.w, rect.h))
 
         # initial the image
         self.image = self.images[0]
