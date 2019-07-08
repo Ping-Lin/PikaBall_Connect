@@ -25,7 +25,7 @@ class GameServer(object):
     def __init__(self, port=9876):
         self.connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.connect.bind(('0.0.0.0', port))
-        self.clientAddr = None
+        self.clientAddr = ('127.0.0.1', port)
 
         self.readList = [self.connect]
         self.writeList = []
@@ -43,7 +43,7 @@ class GameServer(object):
             sendList = ['0']*12   # send click list
             msg = ""   # send msg
             global NEWGAME, STARTDELAY
-            background = pygame.image.load('bg.jpg').convert()
+            background = pygame.image.load('.\\images\\bg.jpg').convert()
             background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
             pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP, MOUSEBUTTONUP])   # improve the FPS
             txtImgs[2] = FONT.render("waiting...", 1, (255, 0, 0))
@@ -57,6 +57,7 @@ class GameServer(object):
                 for f in readable:
                     if f is self.connect:
                         msg, addr = f.recvfrom(32)
+                        msg=msg.decode()
                         if len(msg) >= 2:
                             if msg[1] == ',':
                                 clickList = [x.strip() for x in msg.split(',')]
@@ -64,7 +65,7 @@ class GameServer(object):
                             if msg[0] == 'c':
                                 self.clientAddr = addr
                                 self.start = True
-                                self.connect.sendto('c', self.clientAddr)
+                                self.connect.sendto('c'.encode(), self.clientAddr)
                             elif msg[0] == 'd':
                                 print("Good Bye...")
                                 exit(1)
@@ -111,7 +112,7 @@ class GameServer(object):
 
                 for event in pygame.event.get():
                     if event.type == QUIT:
-                        self.connect.sendto('d', self.clientAddr)
+                        self.connect.sendto('d'.encode(), self.clientAddr)
                         pygame.quit()
                         sys.exit()
                     if event.type == pygame.KEYDOWN:
@@ -177,7 +178,7 @@ class GameServer(object):
                 msg = ','.join(sendList)
                 if msg != '0,0,0,0,0,0,0,0,0,0,0,0':
                     # set send message
-                    self.connect.sendto(msg, self.clientAddr)
+                    self.connect.sendto(msg.encode(), self.clientAddr)
 
                 # draw the image
                 spriteGroup.draw(DISPLAYSURF)
@@ -210,7 +211,7 @@ class GameServer(object):
                     if STARTDELAY == 1000:
                         pygame.time.delay(STARTDELAY)
                         STARTDELAY = 0
-                        self.connect.sendto('s', self.clientAddr)
+                        self.connect.sendto('s'.encode(), self.clientAddr)
                         if not self.starting:
                             self.start = False
                         self.starting = False
@@ -220,7 +221,7 @@ class GameServer(object):
 
                 CLOCK.tick(40)
         finally:
-            self.connect.sendto('d', self.clientAddr)
+            self.connect.sendto('d'.encode(), self.clientAddr)
 
     def run(self):
         global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY, FLAGS

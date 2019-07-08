@@ -38,7 +38,7 @@ class GameClient(object):
         """
         try:
             # Initialize connect to server
-            self.connect.sendto('c', (self.addr, self.serverPort))
+            self.connect.sendto('c'.encode(), (self.addr, self.serverPort))
             clickList = ['0']*12   # receive click list
             sendList = ['0']*5   # send click list
             msg = ""   # send msg
@@ -56,6 +56,7 @@ class GameClient(object):
                 for f in readable:
                     if f is self.connect:
                         msg, addr = f.recvfrom(32)
+                        msg=msg.decode()
                         if len(msg) >= 2:
                             if msg[1] == ',':
                                 clickList = [x.strip() for x in msg.split(',')]
@@ -119,7 +120,7 @@ class GameClient(object):
 
                 for event in pygame.event.get():
                     if event.type == QUIT:
-                        self.connect.sendto('d', (self.addr, self.serverPort))
+                        self.connect.sendto('d'.encode(), (self.addr, self.serverPort))
                         pygame.quit()
                         sys.exit()
                     if event.type == pygame.KEYDOWN:
@@ -162,7 +163,7 @@ class GameClient(object):
                 msg = ','.join(sendList)
                 if msg != '0,0,0,0,0':
                     # set send message
-                    self.connect.sendto(msg, (self.addr, self.serverPort))
+                    self.connect.sendto(msg.encode(), (self.addr, self.serverPort))
 
                 # draw the image
                 DISPLAYSURF.blit(background, (0, 0))
@@ -204,7 +205,7 @@ class GameClient(object):
                     if STARTDELAY == 1000:
                         pygame.time.delay(STARTDELAY)
                         STARTDELAY = 0
-                        self.connect.sendto('s', (self.addr, self.serverPort))
+                        self.connect.sendto('s'.encode(), (self.addr, self.serverPort))
                         if not self.starting:
                             self.start = False
                         self.starting = False
@@ -214,7 +215,7 @@ class GameClient(object):
 
                 CLOCK.tick(40)
         finally:
-            self.connect.sendto('d', (self.addr, self.serverPort))
+            self.connect.sendto('d'.encode(), (self.addr, self.serverPort))
 
     def run(self):
         global IMAGE, DISPLAYSURF, CLOCK, SCORETXT, FONT, ALPHA, NEWGAME, STARTDELAY, FLAGS
