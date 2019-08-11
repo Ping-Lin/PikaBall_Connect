@@ -8,6 +8,7 @@ boundaries and the stick
 """
 
 import pygame
+from pathlib import Path
 
 
 class Wall(pygame.sprite.Sprite):
@@ -17,12 +18,11 @@ class Wall(pygame.sprite.Sprite):
         self.ifScore = [False]*2
         # if there is image upload it
         if img:
-            path = 'obstacle/stick.bmp'
-            self.image = pygame.image.load(path).convert()
+            self.image = pygame.image.load(str(Path('obstacle/stick.bmp'))).convert()
             self.image = pygame.transform.scale(self.image, (rect.w, rect.h))
 
         # sound
-        self.pointSound = pygame.mixer.Sound('obstacle/point.wav')
+        self.pointSound = pygame.mixer.Sound(str(Path('obstacle/point.wav')))
         self.pointSound.set_volume(0.5)
         # color for test
         # self.image = pygame.Surface([self.rect.w, self.rect.h])

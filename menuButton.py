@@ -8,6 +8,7 @@ like 1p vs 1p or connected 1p vs 1p
 """
 
 import re
+from pathlib import Path
 
 import pygame
 
@@ -22,7 +23,7 @@ class MenuButton(pygame.sprite.Sprite):
         self.rect = rect
         self.option = option
         self.images = []
-        self.imageName = 'images/option' + str(option) + '.bmp'
+        self.imageName = str(Path('images', 'option' + str(option) + '.bmp'))
         self.image = loadImg(self.imageName, rect.w, rect.h)
 
     def update(self, clickPos, page, serverAddr=""):

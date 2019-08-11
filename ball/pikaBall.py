@@ -8,6 +8,7 @@ Description: ball class, set up the collision and the speed whatever
 
 import random
 import math
+from pathlib import Path
 
 import pygame
 
@@ -35,9 +36,11 @@ class PikaBall(pygame.sprite.Sprite):
         self.gravity = gbv.GRAVITY
         self.rotate = 5
 
-        path = 'ball/pikaBall.png'
-        self.imageOrigin = loadImg(path, self.width, self.height)
-        self.imageHist = loadImg('ball/pikaBall.bmp', self.width, self.height)
+        baseBallPath = Path('ball')
+        self.imageOrigin = loadImg(str(baseBallPath / 'pikaBall.png'),
+                                   self.width, self.height)
+        self.imageHist = loadImg(str(baseBallPath / 'pikaBall.bmp'),
+                                 self.width, self.height)
         self.image = self.imageOrigin
         self.rect = pygame.Rect(gbv.MARGINLEFT, gbv.BALLHEIGHT,
                                 self.width, self.height)
@@ -46,10 +49,10 @@ class PikaBall(pygame.sprite.Sprite):
         self.ifHitIndex = 0
         self.ifHitPic = False
         self.hitPos = [0, 0]
-        self.imageHitPic = loadImg('ball/pa.png', 100, 100)
+        self.imageHitPic = loadImg(str(baseBallPath / 'pa.png'), 100, 100)
 
         # add ball picture
-        self.imageShadowPic = loadImg('ball/shadow.bmp', 200, 100)
+        self.imageShadowPic = loadImg(str(baseBallPath / 'shadow.bmp'), 200, 100)
 
     def checkMovement(self, clickButton, wallList, pikaList, pos=""):
         """

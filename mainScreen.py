@@ -7,6 +7,7 @@ Description: show the main game screen and the game process
 """
 
 import sys
+from pathlib import Path
 
 import pygame
 from pygame.locals import *
@@ -23,7 +24,7 @@ def runGame(spriteGroup, wallList, pikaList, pikaBall, clickButton, txtImgs,
     Run the main loop of game
     """
     global NEWGAME, STARTDELAY
-    background = pygame.image.load('images/bg.jpg').convert()
+    background = pygame.image.load(str(Path('images/bg.jpg'))).convert()
     background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
     pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP, MOUSEBUTTONUP])   # improve the FPS
     while True:

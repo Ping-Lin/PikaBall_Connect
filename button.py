@@ -8,6 +8,7 @@ like stop the music or the sound
 """
 
 import pygame
+from pathlib import Path
 
 
 class Button(pygame.sprite.Sprite):
@@ -17,13 +18,14 @@ class Button(pygame.sprite.Sprite):
         self.ifOpen = True
         self.option = option
         self.images = []
+        baseImagePath = Path("images")
 
         if option == 1:   # stop the sound
-            self.images.append(loadImg("images/musicOn.png", rect.w, rect.h))
-            self.images.append(loadImg("images/musicOff.png", rect.w, rect.h))
+            self.images.append(loadImg(str(baseImagePath / "musicOn.png"), rect.w, rect.h))
+            self.images.append(loadImg(str(baseImagePath / "musicOff.png"), rect.w, rect.h))
         elif option == 2:   # stop the music
-            self.images.append(loadImg("images/soundOn.png", rect.w, rect.h))
-            self.images.append(loadImg("images/soundOff.png", rect.w, rect.h))
+            self.images.append(loadImg(str(baseImagePath / "soundOn.png"), rect.w, rect.h))
+            self.images.append(loadImg(str(baseImagePath / "soundOff.png"), rect.w, rect.h))
 
         # initial the image
         self.image = self.images[0]

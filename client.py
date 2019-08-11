@@ -9,6 +9,7 @@ Description: show the main game screen and the game process
 import sys
 import socket
 import select
+from pathlib import Path
 
 import pygame
 import pygame.freetype
@@ -43,7 +44,7 @@ class GameClient(object):
             sendList = ['0']*5   # send click list
             msg = ""   # send msg
             global NEWGAME, STARTDELAY
-            background = pygame.image.load('images/bg.jpg').convert()
+            background = pygame.image.load(str(Path('images/bg.jpg'))).convert()
             background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
             pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP, MOUSEBUTTONUP])   # improve the FPS
             while True:

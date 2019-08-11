@@ -9,6 +9,7 @@ Description: show the main game screen and the game process
 import sys
 import select
 import socket
+from pathlib import Path
 
 import pygame
 import pygame.freetype
@@ -25,7 +26,7 @@ class GameServer(object):
     def __init__(self, port=9876):
         self.connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.connect.bind(('0.0.0.0', port))
-        self.clientAddr = ('127.0.0.1', port)
+        self.clientAddr = None
 
         self.readList = [self.connect]
         self.writeList = []
@@ -43,7 +44,7 @@ class GameServer(object):
             sendList = ['0']*12   # send click list
             msg = ""   # send msg
             global NEWGAME, STARTDELAY
-            background = pygame.image.load('.\\images\\bg.jpg').convert()
+            background = pygame.image.load(str(Path('images/bg.jpg'))).convert()
             background = pygame.transform.scale(background, (gbv.WINWIDTH, gbv.WINHEIGHT))
             pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP, MOUSEBUTTONUP])   # improve the FPS
             txtImgs[2] = FONT.render("waiting...", 1, (255, 0, 0))

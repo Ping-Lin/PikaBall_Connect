@@ -6,6 +6,7 @@ Github: Ping-Lin
 Description: pika.py store the information of the pika character
 """
 
+from pathlib import Path
 import pygame
 from pygame.locals import *
 
@@ -27,7 +28,7 @@ class Pika(pygame.sprite.Sprite):
         # Load the pika image: walk, pu, jump
         self.pikaImgs = []
         for i in range(1, 6):
-            path = 'character/pikaToRight' + str(i) + '.bmp'
+            path = str(Path('character/pikaToRight' + str(i) + '.bmp'))
             self.pikaImgs.append(
                 loadImg(path, reverse, self.width, self.height))
 
