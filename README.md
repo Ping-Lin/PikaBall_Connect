@@ -17,7 +17,7 @@
 ## How to compile and run
 需要先安裝pygame的相關套件, 之後弄比較完整會補上轉好的exe及mac的app檔
 ```sh
-pip install -r requirments.txt
+pip install -r requirements.txt
 ```
 
 執行方式: ``` python menu.py ```
